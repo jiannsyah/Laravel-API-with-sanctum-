@@ -10,5 +10,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 // Route::get('/greeting', function () {
 //     return 'Hello World';
 // });
-
-Route::get('/list-articles', ArticleController::class, 'index');
+Route::prefix('V1')->group(function () {
+    Route::get('/list-articles', [ArticleController::class, 'index']);
+});
