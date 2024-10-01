@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Resources\ArticleResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
@@ -14,7 +17,21 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        $query = Article::query();
+        $articles = $query->orderBy('publish_date', 'desc')->get();
+
+        if ($articles->isEmpty()) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Articles Empty'
+            ], Response::HTTP_NOT_FOUND);
+        } else {
+            return response()->json([
+                'data' => ArticleResource::collection($articles),
+                'message' => 'List articles',
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        }
     }
 
     /**
