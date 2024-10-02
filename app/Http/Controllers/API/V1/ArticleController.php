@@ -73,8 +73,27 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        return response()->json([
+            'data' => new ArticleResource($article),
+            'status' => Response::HTTP_OK,
+        ], Response::HTTP_OK);
     }
+
+    // public function show($id)
+    // {
+    //     $article = Article::where('id', $id)->first();
+    //     if ($article) {
+    //         return response()->json([
+    //             'data' => $article,
+    //             'status' => Response::HTTP_OK,
+    //         ], Response::HTTP_OK);
+    //     } else {
+    //         return response()->json([
+    //             'status' => Response::HTTP_NOT_FOUND,
+    //             'message' => 'Failed Data stored to dbd'
+    //         ], Response::HTTP_NOT_FOUND);
+    //     }
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -89,7 +108,25 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        //
+        // $data = $request->validated();
+
+        // $origin = Article::where('id', $article->id)->first();
+
+        // $article->update($data);
+
+        // try {
+        //     return response()->json([
+        //         'data' => new ArticleResource($article),
+        //         'message' => "Article '$origin->title' has been changed  '$article->title'",
+        //         'status' => Response::HTTP_OK,
+        //     ], Response::HTTP_OK);
+        // } catch (Exception $e) {
+        //     Log::error('Error updated data :' . $e->getMessage());
+        //     return response()->json([
+        //         'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+        //         'message' => 'Failed Data updated to dbd'
+        //     ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
     }
 
     /**
@@ -97,6 +134,19 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        // $article->delete();
+
+        // try {
+        //     return response()->json([
+        //         'message' => "Article '$article->title' has been deleted",
+        //         'status' => Response::HTTP_OK,
+        //     ], Response::HTTP_OK);
+        // } catch (Exception $e) {
+        //     Log::error('Error updated data :' . $e->getMessage());
+        //     return response()->json([
+        //         'message' => "Failed Data deleted",
+        //         'status' => Response::HTTP_INTERNAL_SERVER_ERROR
+        //     ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
     }
 }
