@@ -7,8 +7,11 @@ use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Resources\ArticleResource;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
@@ -47,7 +50,22 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        try {
+            Article::create($data);
+
+            return response()->json([
+                'status' => Response::HTTP_OK,
+                'message' => 'Data stored to dbd'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error storing data :' . $e->getMessage());
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Failed Data stored to dbd'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
