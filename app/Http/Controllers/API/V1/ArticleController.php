@@ -134,19 +134,19 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        // $article->delete();
+        $article->delete();
 
-        // try {
-        //     return response()->json([
-        //         'message' => "Article '$article->title' has been deleted",
-        //         'status' => Response::HTTP_OK,
-        //     ], Response::HTTP_OK);
-        // } catch (Exception $e) {
-        //     Log::error('Error updated data :' . $e->getMessage());
-        //     return response()->json([
-        //         'message' => "Failed Data deleted",
-        //         'status' => Response::HTTP_INTERNAL_SERVER_ERROR
-        //     ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        // }
+        try {
+            return response()->json([
+                'message' => "Article '$article->title' has been deleted",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'message' => "Failed Data deleted",
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
