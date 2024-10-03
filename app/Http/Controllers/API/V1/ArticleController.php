@@ -2,26 +2,35 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Services\MyServices;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = Article::query();
-        $articles = $query->orderBy('publish_date', 'desc')->get();
+        $query = Article::query()->orderBy('publish_date', 'desc');
+
+        if (request('title')) {
+            $query->where("title", "like", "%" . request("title") . "%");
+        }
+
+        $articles = $query->paginate(2);
+
+        // $customPaginate = MyServices::customPaginate($articles);
 
         if ($articles->isEmpty()) {
             return response()->json([
@@ -29,11 +38,7 @@ class ArticleController extends Controller
                 'message' => 'Articles Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return response()->json([
-                'data' => ArticleResource::collection($articles),
-                'message' => 'List articles',
-                'status' => Response::HTTP_OK,
-            ], Response::HTTP_OK);
+            return new ArticleCollection($articles);
         }
     }
 
@@ -78,22 +83,6 @@ class ArticleController extends Controller
             'status' => Response::HTTP_OK,
         ], Response::HTTP_OK);
     }
-
-    // public function show($id)
-    // {
-    //     $article = Article::where('id', $id)->first();
-    //     if ($article) {
-    //         return response()->json([
-    //             'data' => $article,
-    //             'status' => Response::HTTP_OK,
-    //         ], Response::HTTP_OK);
-    //     } else {
-    //         return response()->json([
-    //             'status' => Response::HTTP_NOT_FOUND,
-    //             'message' => 'Failed Data stored to dbd'
-    //         ], Response::HTTP_NOT_FOUND);
-    //     }
-    // }
 
     /**
      * Show the form for editing the specified resource.
