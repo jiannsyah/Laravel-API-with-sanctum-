@@ -22,6 +22,13 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $query = Article::query()->orderBy('publish_date', 'desc');
 
         if (request('title')) {
@@ -55,6 +62,13 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->validated();
 
         try {
@@ -76,8 +90,15 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Article $article)
+    public function show(Request $request, Article $article)
     {
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         return response()->json([
             'data' => new ArticleResource($article),
             'status' => Response::HTTP_OK,
@@ -97,6 +118,13 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists update failed, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $data = $request->validated();
 
         $origin = Article::where('id', $article->id)->first();
@@ -121,8 +149,15 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy(Request $request, Article $article)
     {
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists delete failed, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $article->delete();
 
         try {
@@ -137,5 +172,10 @@ class ArticleController extends Controller
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function unauthenticated(Request $request)
+    {
+        # code...
     }
 }
