@@ -22,12 +22,14 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'message' => 'Token not exists, please login first'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        // $token = $request->bearerToken();
+        // if (!$token) {
+        //     return response()->json([
+        //         'message' => 'Token not exists, please login first'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
+
+        $this->unauthenticated($request);
 
         $query = Article::query()->orderBy('publish_date', 'desc');
 
@@ -62,12 +64,13 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'message' => 'Token not exists, please login first'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        // $token = $request->bearerToken();
+        // if (!$token) {
+        //     return response()->json([
+        //         'message' => 'Token not exists, please login first'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
+        $this->unauthenticated($request);
 
         $data = $request->validated();
 
@@ -92,12 +95,13 @@ class ArticleController extends Controller
      */
     public function show(Request $request, Article $article)
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'message' => 'Token not exists, please login first'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        // $token = $request->bearerToken();
+        // if (!$token) {
+        //     return response()->json([
+        //         'message' => 'Token not exists, please login first'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
+        $this->unauthenticated($request);
 
         return response()->json([
             'data' => new ArticleResource($article),
@@ -118,12 +122,13 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'message' => 'Token not exists update failed, please login first'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        // $token = $request->bearerToken();
+        // if (!$token) {
+        //     return response()->json([
+        //         'message' => 'Token not exists update failed, please login first'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
+        $this->unauthenticated($request);
 
         $data = $request->validated();
 
@@ -151,12 +156,13 @@ class ArticleController extends Controller
      */
     public function destroy(Request $request, Article $article)
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'message' => 'Token not exists delete failed, please login first'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        // $token = $request->bearerToken();
+        // if (!$token) {
+        //     return response()->json([
+        //         'message' => 'Token not exists delete failed, please login first'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
+        $this->unauthenticated($request);
 
         $article->delete();
 
@@ -176,6 +182,11 @@ class ArticleController extends Controller
 
     public function unauthenticated(Request $request)
     {
-        # code...
+        $token = $request->bearerToken();
+        if (!$token) {
+            return response()->json([
+                'message' => 'Token not exists, please login first'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
     }
 }
