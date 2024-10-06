@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->text('content');
-            $table->date('publish_date ');
+            $table->date('publish_date');
             $table->timestamps();
         });
     }
