@@ -4,6 +4,7 @@ use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\Unauthenticated;
 use App\Http\Middleware\CheckPermission;
+use App\Models\MasterRawMaterialType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
