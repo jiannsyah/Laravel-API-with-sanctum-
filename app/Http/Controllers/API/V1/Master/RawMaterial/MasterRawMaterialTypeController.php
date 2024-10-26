@@ -10,6 +10,8 @@ use App\Models\MasterRawMaterialType;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class MasterRawMaterialTypeController extends Controller
 {
@@ -24,7 +26,7 @@ class MasterRawMaterialTypeController extends Controller
             $query->where("nameRawMaterialType", "like", "%" . request("nameRawMaterialType") . "%");
         }
 
-        $rawMaterialTypes = $query->paginate(2);
+        $rawMaterialTypes = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
@@ -54,6 +56,38 @@ class MasterRawMaterialTypeController extends Controller
     public function store(StoreMasterRawMaterialTypeRequest $request)
     {
         //
+        $data = $request->validated();
+        // 
+        $latest_code = MasterRawMaterialType::query()->orderBy('codeRawMaterialType', 'desc')->first();
+        $next_code = strval((int)$latest_code->codeRawMaterialType + 10);
+
+        // dd($next_code);
+        if ((int)$next_code === 100) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'The code has reached the limit'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $data['codeRawMaterialType'] = $next_code;
+
+        // dd($latest_code->codeRawMaterialType);
+        // dd($data);
+
+        try {
+            MasterRawMaterialType::create($data);
+
+            return response()->json([
+                'status' => Response::HTTP_OK,
+                'message' => 'Data stored to dbd'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error storing data :' . $e->getMessage());
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Failed Data stored to dbd'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
