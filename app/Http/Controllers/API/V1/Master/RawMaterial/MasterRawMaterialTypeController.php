@@ -55,24 +55,7 @@ class MasterRawMaterialTypeController extends Controller
      */
     public function store(StoreMasterRawMaterialTypeRequest $request)
     {
-        //
         $data = $request->validated();
-        // 
-        $latest_code = MasterRawMaterialType::query()->orderBy('codeRawMaterialType', 'desc')->first();
-        $next_code = strval((int)$latest_code->codeRawMaterialType + 10);
-
-        // dd($next_code);
-        if ((int)$next_code === 100) {
-            return response()->json([
-                'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'The code has reached the limit'
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        $data['codeRawMaterialType'] = $next_code;
-
-        // dd($latest_code->codeRawMaterialType);
-        // dd($data);
 
         try {
             MasterRawMaterialType::create($data);
