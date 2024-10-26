@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\API\V1;
+namespace App\Http\Controllers\API\V1\Master\RawMaterial;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialTypeRequest;
+use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialTypeRequest;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeCollection;
 use App\Models\MasterRawMaterialType;
-use App\Http\Requests\StoreMasterRawMaterialTypeRequest;
-use App\Http\Requests\UpdateMasterRawMaterialTypeRequest;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class MasterRawMaterialTypeController extends Controller
 {
@@ -14,6 +18,25 @@ class MasterRawMaterialTypeController extends Controller
      */
     public function index()
     {
+        $query = MasterRawMaterialType::query()->orderBy('codeRawMaterialType', 'asc');
+
+        if (request('nameRawMaterialType')) {
+            $query->where("nameRawMaterialType", "like", "%" . request("nameRawMaterialType") . "%");
+        }
+
+        $rawMaterialTypes = $query->paginate(2);
+
+        // $customPaginate = MyServices::customPaginate($articles);
+
+        if ($rawMaterialTypes->isEmpty()) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Raw Material Type Empty'
+            ], Response::HTTP_NOT_FOUND);
+        } else {
+            return new MasterRawMaterialTypeCollection($rawMaterialTypes);
+        }
+
         //
     }
 

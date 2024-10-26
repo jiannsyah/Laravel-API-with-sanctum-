@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Master\RawMaterial;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,6 +14,9 @@ class MasterRawMaterialTypeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'codeRawMaterialType' => $this->codeRawMaterialType,
+            'nameRawMaterialType' => $this->nameRawMaterialType,
+        ];
     }
 }

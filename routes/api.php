@@ -2,9 +2,8 @@
 
 use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
-use App\Http\Controllers\API\V1\Unauthenticated;
+use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;
 use App\Http\Middleware\CheckPermission;
-use App\Models\MasterRawMaterialType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +20,7 @@ Route::prefix('V1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::middleware([CheckPermission::class])->group(function () {
             Route::resource('article', ArticleController::class);
+            Route::resource('raw-material-type', MasterRawMaterialTypeController::class);
         });
 
         Route::get('/user', function (Request $request) {

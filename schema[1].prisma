@@ -1,0 +1,864 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+enum Status {
+    Active
+    InActive
+}
+
+// UnitOfMeasurement
+enum PremixUM {
+    BKS
+    GR
+}
+
+enum SmallUnit {
+    PCS
+    BTR
+}
+
+enum LargeUnit {
+    BAL
+    DUS
+}
+
+enum SellingPriceUnit {
+    PCS
+    BTR
+    PACK
+    BAL
+    DUS
+}
+
+enum PpnType {
+    PPn
+    nonPPn
+}
+
+enum PriceType {
+    wholesalePrice
+    nonWholesalePrice
+    Retail
+}
+
+enum UnitOfMeasurement {
+    KG
+    LTR
+    PCS
+}
+
+model User {
+    id        String   @id @default(uuid())
+    userName  String   @unique
+    password  String
+    createdAt DateTime @default(now())
+    role      UserRole @default(USER)
+    updatedAt DateTime @updatedAt
+
+    refreshToken                    Session?
+    // order                   Order[]
+    // master relation
+    MasterRawMaterialType           MasterRawMaterialType[]
+    MasterRawMaterialTypeGroup      MasterRawMaterialTypeGroup[]
+    MasterRawMaterial               MasterRawMaterial[]
+    MasterProductionRoom            MasterProductionRoom[]
+    MasterPremixGroup               MasterPremixGroup[]
+    MasterPremix                    MasterPremix[]
+    MasterProductGroup              MasterProductGroup[]
+    MasterProduct                   MasterProduct[]
+    MasterCustomer                  MasterCustomer[]
+    MasterSupplier                  MasterSupplier[]
+    MasterParameter                 MasterParameter[]
+    RawMaterialHeaderPurchase       RawMaterialHeaderPurchase[]
+    MasterFormulaPremixDetail       MasterFormulaPremixDetail[]
+    ReturnRawMaterialHeaderPurchase ReturnRawMaterialHeaderPurchase[]
+    RawMaterialDetailPurchase       RawMaterialDetailPurchase[]
+    ReturnRawMaterialDetailPurchase ReturnRawMaterialDetailPurchase[]
+    PaymentRawMaterialDebt          PaymentRawMaterialDebt[]
+    DownPaymentRawMaterialPurchase  DownPaymentRawMaterialPurchase[]
+    MasterBalanceSheetAccount       MasterBalanceSheetAccount[]
+    MasterGeneralLedgerAccount      MasterGeneralLedgerAccount[]
+    MasterSalesman                  MasterSalesman[]
+    MasterFormulaProduct            MasterFormulaProduct[]
+    MasterFormulaProductDetail      MasterFormulaProductDetail[]
+
+    @@map("users")
+}
+
+model Session {
+    id        String   @id @default(uuid())
+    token     String   @db.VarChar(255)
+    expire_at DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @unique
+
+    @@map("sessions")
+}
+
+// MasterBahanBakuStatus
+
+model MasterRawMaterialType {
+    id                  String @id @default(uuid())
+    codeRawMaterialType String @unique @db.VarChar(2)
+    nameRawMaterialType String @db.VarChar(255)
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    rawMaterialTypeGroup MasterRawMaterialTypeGroup[] //master grup jenis bahan baku
+    rawMaterials         MasterRawMaterial[] //master bahan baku
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([codeRawMaterialType, nameRawMaterialType])
+    @@map("master-raw-material-type")
+}
+
+model MasterRawMaterialTypeGroup {
+    id                       String @id @default(uuid())
+    codeRawMaterialTypeGroup String @unique @db.VarChar(5) // code master grup jenis bahan baku
+    nameRawMaterialTypeGroup String @db.VarChar(255)
+
+    // many to one with RawMaterialType
+    rawMaterialType     MasterRawMaterialType @relation(fields: [rawMaterialTypeCode], references: [codeRawMaterialType], onDelete: Cascade) //master jenis bahan baku
+    rawMaterialTypeCode String //code jenis bahan baku
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    // many to one with Room
+    room     MasterProductionRoom @relation(fields: [codeRoom], references: [codeProductionRoom], onDelete: Cascade) // master room
+    codeRoom String // code master room
+
+    unitOfMeasurement UnitOfMeasurement
+
+    rawMaterials MasterRawMaterial[]
+
+    createdAt                 DateTime                    @default(now())
+    updatedAt                 DateTime                    @updatedAt
+    MasterFormulaPremixDetail MasterFormulaPremixDetail[]
+
+    @@index([codeRawMaterialTypeGroup, nameRawMaterialTypeGroup])
+    @@map("master-raw-material-type-group")
+}
+
+model MasterRawMaterial {
+    id              String @id @default(uuid())
+    codeRawMaterial String @unique @db.VarChar(8) // code master bahan baku
+    nameRawMaterial String @db.VarChar(255)
+
+    // many to one with RawMaterialTypeGroupMaster
+    rawMaterialTypeGroup     MasterRawMaterialTypeGroup @relation(fields: [rawMaterialTypeGroupCode], references: [codeRawMaterialTypeGroup], onDelete: Cascade) // master grup jenis bahan baku 
+    rawMaterialTypeGroupCode String // code grup jenis bahan baku
+
+    // many to one with RawMaterialTypeMaster
+    rawMaterialType     MasterRawMaterialType @relation(fields: [rawMaterialTypeCode], references: [codeRawMaterialType], onDelete: Cascade) // master jenis bahan baku
+    rawMaterialTypeCode String // code mjenis bahan baku
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    brand String? @default("LOCAL") // merk
+
+    unitOfMeasurement UnitOfMeasurement // satuan
+    status            Status            @default(Active)
+    costPrice         Float?            @default(0) //harga pokok
+    quantityStockGood Int?              @default(0)
+
+    quantityMonth01 Int? @default(0)
+    quantityMonth02 Int? @default(0)
+    quantityMonth03 Int? @default(0)
+    quantityMonth04 Int? @default(0)
+    quantityMonth05 Int? @default(0)
+    quantityMonth06 Int? @default(0)
+    quantityMonth07 Int? @default(0)
+    quantityMonth08 Int? @default(0)
+    quantityMonth09 Int? @default(0)
+    quantityMonth10 Int? @default(0)
+    quantityMonth11 Int? @default(0)
+    quantityMonth12 Int? @default(0)
+
+    averagePriceMonth01 Int? @default(0)
+    priceAverageMonth02 Int? @default(0)
+    priceAverageMonth03 Int? @default(0)
+    priceAverageMonth04 Int? @default(0)
+    priceAverageMonth05 Int? @default(0)
+    priceAverageMonth06 Int? @default(0)
+    priceAverageMonth07 Int? @default(0)
+    priceAverageMonth08 Int? @default(0)
+    priceAverageMonth09 Int? @default(0)
+    priceAverageMonth10 Int? @default(0)
+    priceAverageMonth11 Int? @default(0)
+    priceAverageMonth12 Int? @default(0)
+
+    amountMonth01 Int? @default(0)
+    amountMonth02 Int? @default(0)
+    amountMonth03 Int? @default(0)
+    amountMonth04 Int? @default(0)
+    amountMonth05 Int? @default(0)
+    amountMonth06 Int? @default(0)
+    amountMonth07 Int? @default(0)
+    amountMonth08 Int? @default(0)
+    amountMonth09 Int? @default(0)
+    amountMonth10 Int? @default(0)
+    amountMonth11 Int? @default(0)
+    amountMonth12 Int? @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // purchaseTransactions PurchaseTransaction[]
+    RawMaterialDetailPurchase       RawMaterialDetailPurchase[]
+    ReturnRawMaterialDetailPurchase ReturnRawMaterialDetailPurchase[]
+
+    @@index([codeRawMaterial, nameRawMaterial])
+    @@map("master-raw-material")
+}
+
+model MasterProductionRoom {
+    id                 String @id @default(uuid())
+    codeProductionRoom String @unique @db.VarChar(2)
+    nameProductionRoom String @db.VarChar(255)
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    rawMaterialTypeGroups MasterRawMaterialTypeGroup[] // master grup jenis bahan baku
+    //   semiFinishedGoodsGroups SemiFinishedGoodsGroupMaster[]
+    MasterPremixGroup     MasterPremixGroup[]
+
+    @@map("master-production-room")
+}
+
+model MasterPremixGroup {
+    id              String @id @default(uuid())
+    codePremixGroup String @unique @db.VarChar(5)
+    namePremixGroup String @db.VarChar(255)
+
+    // many to one with ProductionRoomMaster
+    productionRoom     MasterProductionRoom @relation(fields: [productionRoomCode], references: [codeProductionRoom])
+    productionRoomCode String // code master room
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    premixes MasterPremix[] // master bahan setengah jadi
+
+    @@index([codePremixGroup, namePremixGroup])
+    @@map("master-premix-group")
+}
+
+model MasterPremix {
+    id         String @id @default(uuid())
+    codePremix String @unique @db.VarChar(8)
+    namePremix String @db.VarChar(255)
+
+    // many to one with PremixGroupMaster
+    premixGroup     MasterPremixGroup @relation(fields: [premixGroupCode], references: [codePremixGroup])
+    premixGroupCode String // code grup bahan setengah jadi
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    unitOfMeasurement PremixUM //BahaSetngahJadiUM BKS, GR
+    status            Status //MasterBahanBakuStatus
+    quantityStockGood Int?     @default(0)
+
+    quantityMonth01 Int? @default(0)
+    quantityMonth02 Int? @default(0)
+    quantityMonth03 Int? @default(0)
+    quantityMonth04 Int? @default(0)
+    quantityMonth05 Int? @default(0)
+    quantityMonth06 Int? @default(0)
+    quantityMonth07 Int? @default(0)
+    quantityMonth08 Int? @default(0)
+    quantityMonth09 Int? @default(0)
+    quantityMonth10 Int? @default(0)
+    quantityMonth11 Int? @default(0)
+    quantityMonth12 Int? @default(0)
+
+    averagePriceMonth01 Int? @default(0)
+    priceAverageMonth02 Int? @default(0)
+    priceAverageMonth03 Int? @default(0)
+    priceAverageMonth04 Int? @default(0)
+    priceAverageMonth05 Int? @default(0)
+    priceAverageMonth06 Int? @default(0)
+    priceAverageMonth07 Int? @default(0)
+    priceAverageMonth08 Int? @default(0)
+    priceAverageMonth09 Int? @default(0)
+    priceAverageMonth10 Int? @default(0)
+    priceAverageMonth11 Int? @default(0)
+    priceAverageMonth12 Int? @default(0)
+
+    amountMonth01 Int? @default(0)
+    amountMonth02 Int? @default(0)
+    amountMonth03 Int? @default(0)
+    amountMonth04 Int? @default(0)
+    amountMonth05 Int? @default(0)
+    amountMonth06 Int? @default(0)
+    amountMonth07 Int? @default(0)
+    amountMonth08 Int? @default(0)
+    amountMonth09 Int? @default(0)
+    amountMonth10 Int? @default(0)
+    amountMonth11 Int? @default(0)
+    amountMonth12 Int? @default(0)
+
+    createdAt                 DateTime                    @default(now())
+    updatedAt                 DateTime                    @updatedAt
+    MasterFormulaPremixDetail MasterFormulaPremixDetail[]
+
+    @@index([codePremix, namePremix])
+    @@map("master-premix")
+}
+
+model MasterFormulaPremixDetail {
+    id            String       @default(uuid())
+    premix        MasterPremix @relation(fields: [codePremix], references: [codePremix])
+    codePremix    String
+    squenceNumber String       @unique @db.VarChar(2)
+
+    rawMaterialTypeGroup     MasterRawMaterialTypeGroup @relation(fields: [rawMaterialTypeGroupCode], references: [codeRawMaterialTypeGroup])
+    rawMaterialTypeGroupCode String
+    quantity                 Int                        @default(0)
+    unitOfMeasurement        String                     @default("GR")
+    user                     User                       @relation(fields: [userId], references: [id])
+    userId                   String
+    createdAt                DateTime                   @default(now())
+    updatedAt                DateTime                   @updatedAt
+
+    @@index([id, codePremix, squenceNumber])
+    @@map("master-formula-premix-detail")
+}
+
+model MasterProductGroup {
+    id               String @id @default(uuid())
+    codeProductGroup String @unique @db.VarChar(3) // codeMasterGrupProduk
+    nameProductGroup String @db.VarChar(255) // namaMasterGrupProduk
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    products MasterProduct[] // MasterProduk
+
+    @@index([codeProductGroup, nameProductGroup])
+    @@map("master-product-group")
+}
+
+model MasterProduct {
+    id          String @id @default(uuid())
+    codeProduct String @unique @db.VarChar(8) // codeMasterProduk
+    nameProduct String @db.VarChar(255) // namaMasterProduk
+
+    // many to one with ProductGroupMaster
+    productGroup     MasterProductGroup @relation(fields: [productGroupCode], references: [codeProductGroup])
+    productGroupCode String // codeMasterGrupProduk
+
+    // many to one with User
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    smallUnit  SmallUnit // satuanKecil
+    mediumUnit String    @default("PACK") // satuanMenengah
+    largeUnit  LargeUnit
+
+    smallUnitQty  Int? @default(0) // isiKecil
+    mediumUnitQty Int? @default(0) // isiMenengah
+    largeUnitQty  Int? @default(0) // isiBesar
+
+    dryUnitWeight Int? @default(0) // beratSatuanKering
+    wetUnitWeight Int? @default(0) // beratSatuanBasah
+
+    wholesalePrice    Float? @default(0) // hargaJualGrosir
+    nonWholesalePrice Float? @default(0) // hargaJualNonGrosir
+    retailPrice       Float? @default(0) // hargaJualRetail
+
+    sellingPriceInUnit SellingPriceUnit
+
+    status Status // status
+
+    quantityStockGood Int? @default(0)
+
+    quantityMonth01 Int? @default(0)
+    quantityMonth02 Int? @default(0)
+    quantityMonth03 Int? @default(0)
+    quantityMonth04 Int? @default(0)
+    quantityMonth05 Int? @default(0)
+    quantityMonth06 Int? @default(0)
+    quantityMonth07 Int? @default(0)
+    quantityMonth08 Int? @default(0)
+    quantityMonth09 Int? @default(0)
+    quantityMonth10 Int? @default(0)
+    quantityMonth11 Int? @default(0)
+    quantityMonth12 Int? @default(0)
+
+    averagePriceMonth01 Int? @default(0)
+    priceAverageMonth02 Int? @default(0)
+    priceAverageMonth03 Int? @default(0)
+    priceAverageMonth04 Int? @default(0)
+    priceAverageMonth05 Int? @default(0)
+    priceAverageMonth06 Int? @default(0)
+    priceAverageMonth07 Int? @default(0)
+    priceAverageMonth08 Int? @default(0)
+    priceAverageMonth09 Int? @default(0)
+    priceAverageMonth10 Int? @default(0)
+    priceAverageMonth11 Int? @default(0)
+    priceAverageMonth12 Int? @default(0)
+
+    amountMonth01 Int? @default(0)
+    amountMonth02 Int? @default(0)
+    amountMonth03 Int? @default(0)
+    amountMonth04 Int? @default(0)
+    amountMonth05 Int? @default(0)
+    amountMonth06 Int? @default(0)
+    amountMonth07 Int? @default(0)
+    amountMonth08 Int? @default(0)
+    amountMonth09 Int? @default(0)
+    amountMonth10 Int? @default(0)
+    amountMonth11 Int? @default(0)
+    amountMonth12 Int? @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([codeProduct, nameProduct])
+    @@map("master-product")
+}
+
+model MasterFormulaProduct {
+    id                 String @id @default(uuid())
+    codeFormulaProduct String @unique @db.VarChar(5)
+    nameFormulaProduct String @db.VarChar(20)
+    unit               String @default("GR")
+    totalInKilograms   Int    @default(0)
+    totalInPack        Int    @default(0)
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    createdAt                  DateTime                     @default(now())
+    updatedAt                  DateTime                     @updatedAt
+    MasterFormulaProductDetail MasterFormulaProductDetail[]
+
+    @@index([codeFormulaProduct, nameFormulaProduct])
+    @@map("master-formula-product")
+}
+
+enum TypeOfSupportingMaterialFormula {
+    RawMaterial
+    Premix
+}
+
+model MasterFormulaProductDetail {
+    id                       String                          @default(uuid())
+    MasterFormulaProduct     MasterFormulaProduct            @relation(fields: [codeFormulaProduct], references: [codeFormulaProduct])
+    codeFormulaProduct       String
+    typeOfSupportingMaterial TypeOfSupportingMaterialFormula
+    squenceNumber            String                          @unique @db.VarChar(2)
+
+    codeSupportingMaterial String   @db.VarChar(8)
+    quantity               Int      @default(0)
+    unitOfMeasurement      PremixUM
+    notes                  String?  @db.VarChar(40)
+
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([id, codeFormulaProduct, typeOfSupportingMaterial, squenceNumber])
+    @@map("master-formula-product-detail")
+}
+
+model MasterCustomer {
+    id           String    @id @default(uuid())
+    codeCustomer String    @unique @db.VarChar(5) // codeMasterCustomer
+    nameCustomer String    @db.VarChar(40) // namaMasterCustomer
+    abbreviation String    @db.VarChar(20) // abvCustomer
+    addressLine1 String?   @default("") @db.VarChar(50) // address1
+    addressLine2 String?   @default("") @db.VarChar(50) // address2
+    ppn          PpnType
+    phone        String?   @default("") @db.VarChar(30) // telp
+    email        String?   @default("") // email
+    attention    String?   @default("") // attn
+    priceType    PriceType // hjTipe
+    top          Int?      @default(0) //creditTerms
+    npwp         String?   @default("")
+    nik          String?   @default("")
+    status       Status // status
+    user         User      @relation(fields: [userId], references: [id])
+    userId       String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([codeCustomer, nameCustomer])
+    @@map("master-customer")
+}
+
+model MasterSalesman {
+    id           String @id @default(uuid())
+    codeSalesman String @unique @db.VarChar(2) // codeMasterCustomer
+    nameSalesman String @db.VarChar(40) // namaMasterCustomer
+    abbreviation String @db.VarChar(20) // abvCustomer
+    user         User   @relation(fields: [userId], references: [id])
+    userId       String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([codeSalesman, nameSalesman])
+    @@map("master-salesman")
+}
+
+model MasterSupplier {
+    id           String  @id @default(uuid())
+    codeSupplier String  @unique @db.VarChar(5) // codeMasterSupplier
+    nameSupplier String  @db.VarChar(40) // namaMasterSupplier
+    abbreviation String  @db.VarChar(20) // abvSupplier
+    addressLine1 String? @default("") @db.VarChar(50) // address1
+    addressLine2 String? @default("") @db.VarChar(50) // address2
+    ppn          PpnType // ppn
+    phone        String? @default("") @db.VarChar(30) // telp
+    email        String? @default("") // email
+    attention    String? @default("") // attn
+    top          Int     @default(0) // creditTerms
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user                            User                              @relation(fields: [userId], references: [id])
+    userId                          String
+    //   purchaseRecords  PurchaseRecord[] // TransaksiPembelianBahanBaku
+    PaymentRawMaterialDebt          PaymentRawMaterialDebt[]
+    DownPaymentRawMaterialPurchase  DownPaymentRawMaterialPurchase[]
+    RawMaterialHeaderPurchase       RawMaterialHeaderPurchase[]
+    ReturnRawMaterialHeaderPurchase ReturnRawMaterialHeaderPurchase[]
+
+    @@index([codeSupplier, nameSupplier])
+    @@map("master-supplier")
+}
+
+model MasterParameter {
+    id           String   @id @default(uuid())
+    databaseYear Int? // tahunDatabase
+    startDate    DateTime // hariAwalDatabase
+    workingDay   DateTime @default(now()) // hariKerjaDatabase
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    @@map("master-parameter-v2")
+}
+
+enum CharacterAccountBalance {
+    Header
+    Total
+    Account
+}
+
+enum TypeAccountBalance {
+    AK //akktiva
+    PS //passiva
+    PD //pendapatan
+    BY //biaya
+    LL //lainlain
+}
+
+enum SpecialAccountBalance {
+    KS //Kas
+    BK //Bank
+    RE //laba di tahan
+    PCY //laba tahun berjalan
+    GENERAL
+}
+
+model MasterBalanceSheetAccount {
+    id                    String                  @id @default(uuid())
+    numberAccount         String                  @unique @db.VarChar(8)
+    nameAccountBalance    String                  @db.VarChar(50)
+    abbreviation          String                  @db.VarChar(25)
+    characteristicAccount CharacterAccountBalance
+    typeAccount           TypeAccountBalance
+    specialAccount        SpecialAccountBalance
+    subTotalAccount       String                  @db.VarChar(8)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user                       User                         @relation(fields: [userId], references: [id])
+    userId                     String
+    MasterGeneralLedgerAccount MasterGeneralLedgerAccount[]
+
+    @@map("master-balance-sheet-account")
+}
+
+model MasterGeneralLedgerAccount {
+    id                        String                    @id @default(uuid())
+    numberAccount             String                    @unique @db.VarChar(8)
+    nameAccountGL             String                    @db.VarChar(50)
+    abbreviation              String                    @db.VarChar(25)
+    MasterBalanceSheetAccount MasterBalanceSheetAccount @relation(fields: [numberAccountBalance], references: [numberAccount])
+    numberAccountBalance      String
+    typeAccount               TypeAccountBalance
+    specialAccount            SpecialAccountBalance
+    valueMonth01              Int?                      @default(0)
+    valueMonth02              Int?                      @default(0)
+    valueMonth03              Int?                      @default(0)
+    valueMonth04              Int?                      @default(0)
+    valueMonth05              Int?                      @default(0)
+    valueMonth06              Int?                      @default(0)
+    valueMonth07              Int?                      @default(0)
+    valueMonth08              Int?                      @default(0)
+    valueMonth09              Int?                      @default(0)
+    valueMonth10              Int?                      @default(0)
+    valueMonth11              Int?                      @default(0)
+    valueMonth12              Int?                      @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user                       User                             @relation(fields: [userId], references: [id])
+    userId                     String
+    DebitAccountDPRawMaterial  DownPaymentRawMaterialPurchase[] @relation("DebitAccountDPRawMaterial")
+    CreditAccountDPRawMaterial DownPaymentRawMaterialPurchase[] @relation("CreditAccountDPRawMaterial")
+    RawMaterialHeaderPurchase  RawMaterialHeaderPurchase[]
+    PaymentRawMaterialDebt     PaymentRawMaterialDebt[]
+
+    @@map("master-general-ledger-account")
+}
+
+// Transactions
+
+model DownPaymentRawMaterialPurchase {
+    id              String   @id @default(uuid())
+    documentNumber  String   @unique
+    downPaymentDate DateTime
+
+    MasterSupplier        MasterSupplier             @relation(fields: [codeSupplier], references: [codeSupplier])
+    codeSupplier          String
+    downPaymentAmount     Int?                       @default(0)
+    downPaymentBalance    Int?                       @default(0)
+    notes                 String                     @default("") @db.VarChar(40)
+    MasterGLDebitAccount  MasterGeneralLedgerAccount @relation("DebitAccountDPRawMaterial", fields: [debitAccount], references: [numberAccount])
+    debitAccount          String
+    MasterGLCreditAccount MasterGeneralLedgerAccount @relation("CreditAccountDPRawMaterial", fields: [creditAccount], references: [numberAccount])
+    creditAccount         String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@map("purchase-down-payment-raw-material")
+}
+
+model RawMaterialHeaderPurchase {
+    id             String   @id @default(uuid())
+    documentNumber String   @unique @db.VarChar(11) // noDokumen
+    documentDate   DateTime // tanggalDokumen
+
+    supplier     MasterSupplier @relation(fields: [codeSupplier], references: [codeSupplier])
+    codeSupplier String // codeMasterSupplier
+
+    supplierDO String? @default("") @db.VarChar(20) // nodDoSupplier
+    supplierPO String? @default("") @db.VarChar(20) // noPoSupplier
+
+    dueDays         Int?      @default(0) // jumlahHariJt
+    dueDate         DateTime // tanggalJt
+    taxSerialNumber String?   @default("") @db.VarChar(20) // noSeriPajak
+    taxSerialDate   DateTime? @default(now()) // tanggalSeriPajak
+    notes           String?   @default("") @db.VarChar(35) // keterangan
+
+    amount              Float? @default(0) // jumlah
+    itemDiscountTotal   Float? @default(0) // totalDiskonBarang
+    discountPercentage1 Float? @default(0) // persentaseDiskon1
+    discountAmount1     Float? @default(0) // nilaiDiskon1
+    discountPercentage2 Float? @default(0) // persentaseDiskon2
+    discountAmount2     Float? @default(0) // nilaiDiskon2
+    vatPercentage       Float? @default(0) // persentasePpn
+    vatAmount           Float? @default(0) // nilaiPpn
+
+    cashOrBankValue            Float?                     @default(0) // nilaiCash
+    creditValue                Float?                     @default(0) // nilaiCredit
+    MasterGeneralLedgerAccount MasterGeneralLedgerAccount @relation(fields: [cashOrBankAccount], references: [numberAccount])
+    cashOrBankAccount          String
+
+    paymentCash     Float? @default(0) // pembayaranViaCash
+    paymentBank     Float? @default(0) // pembayaranViaBank
+    paymentGiro     Float? @default(0) // pembayaranViaGiro
+    paymentReturn   Float? @default(0) // pembayaranViaRetur
+    paymentDiscount Float? @default(0) // pembayaranViaDiskon
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    //   relatedPurchaseInvoices  PurchaseInvoice[] // ListTransaksiPembelianBahanBaku
+    RawMaterialDetailPurchaseInvoice RawMaterialDetailPurchase[]
+    paymentRawMaterialDebt           PaymentRawMaterialDebt[]
+
+    @@index([documentNumber])
+    @@map("purchase-raw-material-header")
+}
+
+model RawMaterialDetailPurchase {
+    id                        String                    @id @default(uuid())
+    RawMaterialHeaderPurchase RawMaterialHeaderPurchase @relation(fields: [documentNumber], references: [documentNumber])
+    documentNumber            String
+    squenceNumber             String                    @unique
+
+    rawMaterial             MasterRawMaterial @relation(fields: [codeRawMaterial], references: [codeRawMaterial])
+    codeRawMaterial         String
+    quantityType            Int?              @default(0)
+    price                   Float?            @default(0)
+    discountItemPercentage1 Int?              @default(0)
+    discountItemPercentage2 Int?              @default(0)
+    discountItemAmount      Int?              @default(0)
+    discountAmount1         Int?              @default(0)
+    discountAmount2         Int?              @default(0)
+    vatPercentage           Int?              @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    @@index([documentNumber, squenceNumber])
+    @@map("purchase-raw-material-detail")
+}
+
+model ReturnRawMaterialHeaderPurchase {
+    id             String   @id @default(uuid())
+    documentNumber String   @unique @db.VarChar(11) // noDokumen
+    documentDate   DateTime // tanggalDokumen
+
+    supplier     MasterSupplier @relation(fields: [codeSupplier], references: [codeSupplier])
+    codeSupplier String // codeMasterSupplier
+    notes        String?        @default("") @db.VarChar(35) // keterangan
+
+    amount              Float? @default(0) // jumlah
+    itemDiscountTotal   Float? @default(0) // totalDiskonBarang
+    discountPercentage1 Float? @default(0) // persentaseDiskon1
+    discountAmount1     Float? @default(0) // nilaiDiskon1
+    discountPercentage2 Float? @default(0) // persentaseDiskon2
+    discountAmount2     Float? @default(0) // nilaiDiskon2
+    vatPercentage       Float? @default(0) // persentasePpn
+    vatAmount           Float? @default(0) // nilaiPpn
+
+    paymentDebit  Float? @default(0) // nilaiCash
+    paymentCredit Float? @default(0) // nilaiCredit
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user                            User                              @relation(fields: [userId], references: [id])
+    userId                          String
+    ReturnRawMaterialDetailPurchase ReturnRawMaterialDetailPurchase[]
+    PaymentRawMaterialDebt          PaymentRawMaterialDebt[]
+
+    @@index([documentNumber])
+    @@map("purchase-return-raw-material-header")
+}
+
+model ReturnRawMaterialDetailPurchase {
+    id                              String                          @id @default(uuid())
+    ReturnRawMaterialHeaderPurchase ReturnRawMaterialHeaderPurchase @relation(fields: [documentNumber], references: [documentNumber])
+    documentNumber                  String
+    squenceNumber                   String                          @unique
+
+    rawMaterial             MasterRawMaterial @relation(fields: [codeRawMaterial], references: [codeRawMaterial])
+    codeRawMaterial         String
+    quantityType            Int?              @default(0)
+    price                   Float?            @default(0)
+    discountItemPercentage1 Int?              @default(0)
+    discountItemPercentage2 Int?              @default(0)
+    discountItemAmount      Int?              @default(0)
+    discountAmount1         Int?              @default(0)
+    discountAmount2         Int?              @default(0)
+    vatPercentage           Int?              @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    @@index([documentNumber, squenceNumber])
+    @@map("purchase-return-raw-material-detail")
+}
+
+model PaymentRawMaterialDebt {
+    id                        String                    @id @default(uuid())
+    RawMaterialHeaderPurchase RawMaterialHeaderPurchase @relation(fields: [documentNumber], references: [documentNumber])
+    documentNumber            String
+    paymentDate               DateTime
+    squenceNumber             String                    @unique
+
+    cashAmount Int?      @default(0)
+    bankAmount Int?      @default(0)
+    giroAmount Int?      @default(0)
+    giroNumber String?   @default("") @db.VarChar(15)
+    giroDate   DateTime? @default(now())
+
+    MasterGeneralLedgerAccount MasterGeneralLedgerAccount @relation(fields: [cashOrBankAccount], references: [numberAccount])
+    cashOrBankAccount          String
+
+    ReturnRawMaterialHeaderPurchase ReturnRawMaterialHeaderPurchase? @relation(fields: [paymentByReturn], references: [documentNumber])
+    paymentByReturn                 String?                          @default("")
+    paymentByReturnAmount           Int?                             @default(0)
+    DiscountAmount                  Int?                             @default(0)
+
+    MasterSupplier MasterSupplier @relation(fields: [codeSupplier], references: [codeSupplier])
+    codeSupplier   String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+
+    @@index([documentNumber, paymentDate, squenceNumber])
+    @@map("payment-raw-material-debt")
+}
