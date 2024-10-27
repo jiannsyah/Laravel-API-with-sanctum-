@@ -12,6 +12,7 @@ use App\Models\MasterRawMaterialType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class MasterRawMaterialTypeController extends Controller
@@ -57,6 +58,8 @@ class MasterRawMaterialTypeController extends Controller
     public function store(StoreMasterRawMaterialTypeRequest $request)
     {
         $data = $request->validated();
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
 
         try {
             MasterRawMaterialType::create($data);
@@ -104,7 +107,9 @@ class MasterRawMaterialTypeController extends Controller
     {
         //
         $masterRawMaterialType = MasterRawMaterialType::findOrFail($id);
-        $origin = $masterRawMaterialType;
+        $masterRawMaterialType['updated_by'] = Auth::id();
+        $origin = clone $masterRawMaterialType;
+        // dd(gettype($masterRawMaterialType));
         // 
         $masterRawMaterialType->update($request->validated());
 
@@ -129,7 +134,7 @@ class MasterRawMaterialTypeController extends Controller
     public function destroy($id)
     {
         $rawMaterialType = MasterRawMaterialType::find($id);
-        $origin = $rawMaterialType;
+        $origin = clone $rawMaterialType;
 
         if ($rawMaterialType) {
             $rawMaterialType->delete();

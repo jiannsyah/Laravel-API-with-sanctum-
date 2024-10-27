@@ -12,5 +12,15 @@ class MasterRawMaterialType extends Model
 
     use HasUuids;
 
-    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType'];
+    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 }
