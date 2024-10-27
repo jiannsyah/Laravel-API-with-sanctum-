@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Article::factory(10)->create();
+        $this->call(UsersTableSeeder::class);
         $this->call(MasterRawMaterialTypeSeeder::class);
+        $this->call(MasterRawMaterialGroupSeeder::class);
         // User::factory(10)->create();
 
         // User::factory()->create([
