@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Master\RawMaterial;
 
+use App\Models\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMasterRawMaterialTypeRequest extends FormRequest
@@ -11,9 +12,19 @@ class UpdateMasterRawMaterialTypeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
+    // protected function prepareForValidation(): void
+    // {
+    //     $id = $this->route('raw_material_type'); // Ambil ID dari parameter route
+    //     $data = MasterRawMaterialType::findOrFail($id);
+    //     // dd($data);
+
+    //     $this->merge([
+    //         'codeRawMaterialType' => $data->codeRawMaterialType
+    //     ]);
+    // }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +33,7 @@ class UpdateMasterRawMaterialTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nameRawMaterialType' => 'required'
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialTypeRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialTypeRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeCollection;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeResource;
 use App\Models\MasterRawMaterialType;
 
 use Illuminate\Http\Request;
@@ -76,9 +77,15 @@ class MasterRawMaterialTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MasterRawMaterialType $masterRawMaterialType)
+    public function show($id)
     {
-        //
+        $masterRawMaterialType = MasterRawMaterialType::findOrFail($id);
+        // dd($masterRawMaterialType);
+
+        return response()->json([
+            'data' => new MasterRawMaterialTypeResource($masterRawMaterialType),
+            'status' => Response::HTTP_OK,
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -87,21 +94,58 @@ class MasterRawMaterialTypeController extends Controller
     public function edit(MasterRawMaterialType $masterRawMaterialType)
     {
         //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterRawMaterialTypeRequest $request, MasterRawMaterialType $masterRawMaterialType)
+    public function update(UpdateMasterRawMaterialTypeRequest $request, $id)
     {
         //
+        $masterRawMaterialType = MasterRawMaterialType::findOrFail($id);
+        $origin = $masterRawMaterialType;
+        // 
+        $masterRawMaterialType->update($request->validated());
+
+        try {
+            return response()->json([
+                'data' => new MasterRawMaterialTypeResource($masterRawMaterialType),
+                'message' => "Raw material type with name '$origin->nameRawMaterialType' has been changed  '$masterRawMaterialType->nameRawMaterialType'",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Failed Data updated to dbd'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MasterRawMaterialType $masterRawMaterialType)
+    public function destroy($id)
     {
-        //
+        $rawMaterialType = MasterRawMaterialType::find($id);
+        $origin = $rawMaterialType;
+
+        if ($rawMaterialType) {
+            $rawMaterialType->delete();
+        }
+
+        try {
+            return response()->json([
+                'message' => "Raw material type with name '$origin->nameRawMaterialType' has been deleted",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'message' => "Failed Data deleted",
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

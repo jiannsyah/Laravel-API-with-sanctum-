@@ -78,6 +78,8 @@ class ArticleController extends Controller
      */
     public function show(Request $request, Article $article)
     {
+        dd($article);
+
         return response()->json([
             'data' => new ArticleResource($article),
             'status' => Response::HTTP_OK,
@@ -102,7 +104,7 @@ class ArticleController extends Controller
         $origin = Article::where('id', $article->id)->first();
 
         $article->update($data);
-
+        // dd($article);
         try {
             return response()->json([
                 'data' => new ArticleResource($article),

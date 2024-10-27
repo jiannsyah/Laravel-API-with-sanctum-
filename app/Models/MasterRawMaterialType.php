@@ -12,5 +12,9 @@ class MasterRawMaterialType extends Model
 
     use HasUuids;
 
+    protected $connection = 'mysql'; // atau nama koneksi lainnya
+
+    protected $table = 'master_raw_material_types';
+
     protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType'];
 }
