@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('master_raw_material_groups', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('codeRawMaterialGroup', 5)->unique();
-            $table->string('nameRawMaterialgroup', 50);
+            $table->string('nameRawMaterialGroup', 50);
             $table->enum('unitOfMeasurement', ['KG', 'LTR', 'PCS'])->default('KG');
             // 
             $table->foreignId('created_by')->constrained('users');

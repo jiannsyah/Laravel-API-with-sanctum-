@@ -14,6 +14,11 @@ class MasterRawMaterialType extends Model
 
     protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
 
+    public function groups()
+    {
+        return $this->hasMany(MasterRawMaterialGroup::class);
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

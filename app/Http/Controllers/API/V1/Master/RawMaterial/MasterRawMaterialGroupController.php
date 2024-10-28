@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API\V1\Master\RawMaterial;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialGroupCollection;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialGroupResource;
 use App\Models\MasterRawMaterialGroup;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class MasterRawMaterialGroupController extends Controller
 {
@@ -13,7 +16,24 @@ class MasterRawMaterialGroupController extends Controller
      */
     public function index()
     {
-        //
+        $query = MasterRawMaterialGroup::with('type')->orderBy('codeRawMaterialGroup', 'asc');
+
+        if (request('nameRawMaterialGroup')) {
+            $query->where("nameRawMaterialGroup", "like", "%" . request("nameRawMaterialGroup") . "%");
+        }
+
+        $rawMaterialGroups = $query->paginate(10);
+
+        // $customPaginate = MyServices::customPaginate($articles);
+
+        if ($rawMaterialGroups->isEmpty()) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Raw Material Group Empty'
+            ], Response::HTTP_NOT_FOUND);
+        } else {
+            return new MasterRawMaterialGroupCollection($rawMaterialGroups);
+        }
     }
 
     /**
@@ -35,9 +55,15 @@ class MasterRawMaterialGroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MasterRawMaterialGroup $masterRawMaterialGroup)
+    public function show($id)
     {
-        //
+        $masterRawMaterialGroup = MasterRawMaterialGroup::with('type')->findOrFail($id);
+        // dd($masterRawMaterialGroup);
+
+        return response()->json([
+            'data' => new MasterRawMaterialGroupResource($masterRawMaterialGroup),
+            'status' => Response::HTTP_OK,
+        ], Response::HTTP_OK);
     }
 
     /**
