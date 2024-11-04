@@ -7,6 +7,7 @@ use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialTypeRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialTypeRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeCollection;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeResource;
+use App\Models\MasterRawMaterialGroup;
 use App\Models\MasterRawMaterialType;
 
 use Illuminate\Http\Request;
@@ -136,7 +137,14 @@ class MasterRawMaterialTypeController extends Controller
         $rawMaterialType = MasterRawMaterialType::find($id);
         $origin = clone $rawMaterialType;
 
-        if ($rawMaterialType) {
+        $exists = MasterRawMaterialGroup::where('codeRawMaterialType', $id)->exists();
+        // dd($exists);
+        if ($exists) {
+            return response()->json([
+                'message' => "Raw material type cannot be deleted because it is linked to a group",
+                'status' => Response::HTTP_FORBIDDEN
+            ], Response::HTTP_FORBIDDEN);
+        } else {
             $rawMaterialType->delete();
         }
 

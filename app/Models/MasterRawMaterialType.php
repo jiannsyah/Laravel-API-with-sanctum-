@@ -16,7 +16,7 @@ class MasterRawMaterialType extends Model
 
     public function groups()
     {
-        return $this->hasMany(MasterRawMaterialGroup::class);
+        return $this->hasMany(MasterRawMaterialGroup::class, 'codeRawMaterialType');
     }
 
     public function createdBy()

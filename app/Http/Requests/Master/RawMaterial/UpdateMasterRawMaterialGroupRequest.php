@@ -11,7 +11,7 @@ class UpdateMasterRawMaterialGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateMasterRawMaterialGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nameRawMaterialGroup' => 'required|min:3|max:50',
+            'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
+            // 'unitOfMeasurement' => ['required', new Enum(UOMType::class)],
         ];
     }
 }

@@ -12,7 +12,7 @@ class MasterRawMaterialGroup extends Model
 
     use HasUuids;
 
-    protected $fillable = ['codeRawMaterialGroup', 'nameRawMaterialGroup', 'codeRawMaterialType'];
+    protected $fillable = ['codeRawMaterialGroup', 'nameRawMaterialGroup', 'unitOfMeasurement', 'codeRawMaterialType', 'created_by', 'updated_by'];
 
     public function type()
     {

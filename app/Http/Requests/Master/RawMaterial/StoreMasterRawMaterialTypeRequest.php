@@ -35,7 +35,7 @@ class StoreMasterRawMaterialTypeRequest extends FormRequest
     {
         return [
             'codeRawMaterialType' => 'required',
-            'nameRawMaterialType' => 'required',
+            'nameRawMaterialType' => 'required|min:3|max:50',
         ];
     }
 
