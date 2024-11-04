@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API\V1\Master\RawMaterial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialRequest;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialCollection;
 use App\Models\MasterRawMaterial;
+use Illuminate\Http\Response;
 
 class MasterRawMaterialController extends Controller
 {
@@ -14,7 +16,24 @@ class MasterRawMaterialController extends Controller
      */
     public function index()
     {
-        //
+        $query = MasterRawMaterial::with(['type', 'group'])->orderBy('codeRawMaterial', 'asc');
+
+        if (request('nameRawMaterial')) {
+            $query->where("nameRawMaterial", "like", "%" . request("nameRawMaterial") . "%");
+        }
+
+        $rawMaterials = $query->paginate(10);
+
+        // $customPaginate = MyServices::customPaginate($articles);
+
+        if ($rawMaterials->isEmpty()) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Raw Material Group Empty'
+            ], Response::HTTP_NOT_FOUND);
+        } else {
+            return new MasterRawMaterialCollection($rawMaterials);
+        }
     }
 
     /**
