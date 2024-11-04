@@ -19,6 +19,11 @@ class MasterRawMaterialGroup extends Model
         return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType');
     }
 
+    public function materials()
+    {
+        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialGroup');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
