@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API\V1\Master\RawMaterial;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialRequest;
+use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialRequest;
 use App\Models\MasterRawMaterial;
-use App\Http\Requests\StoreMasterRawMaterialRequest;
-use App\Http\Requests\UpdateMasterRawMaterialRequest;
 
-class MaterRawMaterialController extends Controller
+class MasterRawMaterialController extends Controller
 {
     /**
      * Display a listing of the resource.
