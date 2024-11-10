@@ -13,6 +13,12 @@ class MasterProductGroup extends Model
 
     protected $fillable = ['codeProductGroup', 'nameProductGroup', 'created_by', 'updated_by'];
 
+
+    public function products()
+    {
+        return $this->hasMany(MasterProduct::class, 'codeProductGroup');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
