@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
-use App\Http\Controllers\API\V1\Master\RawMaterial\MasterProductGroupController;
+use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Master\RawMaterial;
+namespace App\Http\Requests\Master\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,13 @@ class UpdateMasterProductGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'nameProductGroup' => strtoupper($this->input('nameProductGroup')),
+        ]);
     }
 
     /**
@@ -22,7 +28,7 @@ class UpdateMasterProductGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nameProductGroup' => 'required|min:3|max:50'
         ];
     }
 }
