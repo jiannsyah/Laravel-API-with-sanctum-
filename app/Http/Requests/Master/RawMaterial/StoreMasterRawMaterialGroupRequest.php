@@ -33,7 +33,7 @@ class StoreMasterRawMaterialGroupRequest extends FormRequest
         if ($data === null) {
             $code .= '001';
         } else {
-            $latest_code = substr($data->codeRawMaterialGroup, 2, 3);
+            $latest_code = substr($data->codeRawMaterialGroup, -3);
             $code .= substr(strval((int)$latest_code + 1001), 1, 3);
         }
 

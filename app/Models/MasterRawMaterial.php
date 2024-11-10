@@ -14,6 +14,10 @@ class MasterRawMaterial extends Model
 
     protected $fillable = ['codeRawMaterial', 'nameRawMaterial', 'brand', 'unitOfMeasurement', 'status', 'costPrice', 'codeRawMaterialType', 'codeRawMaterialGroup', 'created_by', 'updated_by'];
 
+    protected $attributes = [
+        'brand' => 'LOCAL'
+    ];
+
     public function type()
     {
         return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType');

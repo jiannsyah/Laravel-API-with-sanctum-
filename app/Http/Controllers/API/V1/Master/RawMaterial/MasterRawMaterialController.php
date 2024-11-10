@@ -7,7 +7,10 @@ use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialCollection;
 use App\Models\MasterRawMaterial;
+use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MasterRawMaterialController extends Controller
 {
@@ -49,7 +52,24 @@ class MasterRawMaterialController extends Controller
      */
     public function store(StoreMasterRawMaterialRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+        // dd($data);
+        try {
+            MasterRawMaterial::create($data);
+
+            return response()->json([
+                'status' => Response::HTTP_OK,
+                'message' => 'Data stored to dbd'
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error storing data :' . $e->getMessage());
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Failed Data stored to dbd'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
