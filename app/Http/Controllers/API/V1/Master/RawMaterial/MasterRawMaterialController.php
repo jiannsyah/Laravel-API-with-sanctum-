@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialCollection;
+use App\Http\Resources\Master\RawMaterial\MasterRawMaterialResource;
 use App\Models\MasterRawMaterial;
 use Exception;
 use Illuminate\Http\Response;
@@ -32,7 +33,7 @@ class MasterRawMaterialController extends Controller
         if ($rawMaterials->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Raw Material Group Empty'
+                'message' => 'Raw Material  Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
             return new MasterRawMaterialCollection($rawMaterials);
@@ -75,9 +76,15 @@ class MasterRawMaterialController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MasterRawMaterial $masterRawMaterial)
+    public function show($id)
     {
-        //
+        $masterRawMaterial = MasterRawMaterial::with(['type', 'group'])->findOrFail($id);
+        // dd($masterRawMaterial);
+
+        return response()->json([
+            'data' => new MasterRawMaterialResource($masterRawMaterial),
+            'status' => Response::HTTP_OK,
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -91,16 +98,62 @@ class MasterRawMaterialController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterRawMaterialRequest $request, MasterRawMaterial $masterRawMaterial)
+    public function update(UpdateMasterRawMaterialRequest $request, $id)
     {
-        //
+        $masterRawMaterial = MasterRawMaterial::with(['type', 'group'])->findOrFail($id);
+        $masterRawMaterial['updated_by'] = Auth::id();
+        $origin = clone $masterRawMaterial;
+        // dd($masterRawMaterial);
+        // 
+        $masterRawMaterial->update($request->validated());
+
+        try {
+            return response()->json([
+                'data' => new MasterRawMaterialResource($masterRawMaterial),
+                'message' => "Raw material type with name '$origin->nameRawMaterial' has been changed  '$masterRawMaterial->nameRawMaterial'",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => 'Failed Data updated to dbd'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MasterRawMaterial $masterRawMaterial)
+    public function destroy($id)
     {
-        //
+        $rawMaterial = MasterRawMaterial::find($id);
+        $origin = clone $rawMaterial;
+
+        // $exists = MasterRawMaterial::where('codeRawMaterialGroup', $id)->exists();
+        // // dd($exists);
+        // if ($exists) {
+        //     return response()->json([
+        //         'message' => "Raw material group cannot be deleted because it is linked to a raw material",
+        //         'status' => Response::HTTP_FORBIDDEN
+        //     ], Response::HTTP_FORBIDDEN);
+        // } else {
+        //     $rawMaterialGroup->delete();
+        // }
+        // 
+        $rawMaterial->delete();
+
+        try {
+            return response()->json([
+                'message' => "Raw material with name '$origin->nameRawMaterial' has been deleted",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'message' => "Failed Data deleted",
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

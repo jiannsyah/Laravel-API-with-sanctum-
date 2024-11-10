@@ -8,6 +8,7 @@ use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialGroupRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialTypeRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialGroupCollection;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialGroupResource;
+use App\Models\MasterRawMaterial;
 use App\Models\MasterRawMaterialGroup;
 use Exception;
 use Illuminate\Http\Request;
@@ -127,8 +128,33 @@ class MasterRawMaterialGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MasterRawMaterialGroup $masterRawMaterialGroup)
+    public function destroy($id)
     {
-        //
+        $rawMaterialGroup = MasterRawMaterialGroup::find($id);
+        $origin = clone $rawMaterialGroup;
+
+        $exists = MasterRawMaterial::where('codeRawMaterialGroup', $id)->exists();
+        // dd($exists);
+        if ($exists) {
+            return response()->json([
+                'message' => "Raw material group cannot be deleted because it is linked to a raw material",
+                'status' => Response::HTTP_FORBIDDEN
+            ], Response::HTTP_FORBIDDEN);
+        } else {
+            $rawMaterialGroup->delete();
+        }
+
+        try {
+            return response()->json([
+                'message' => "Raw material group with name '$origin->nameRawMaterialGroup' has been deleted",
+                'status' => Response::HTTP_OK,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error('Error updated data :' . $e->getMessage());
+            return response()->json([
+                'message' => "Failed Data deleted",
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

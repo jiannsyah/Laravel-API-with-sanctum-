@@ -11,7 +11,7 @@ class UpdateMasterRawMaterialRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateMasterRawMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nameRawMaterial' => 'required|min:3|max:50',
+            'brand' => 'min:3',
+            'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
+            'status' => 'required|in:Active,Non-Active',
+            'costPrice' => 'required|numeric|min:0',
         ];
     }
 }
