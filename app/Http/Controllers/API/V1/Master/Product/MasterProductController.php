@@ -3,41 +3,40 @@
 namespace App\Http\Controllers\API\V1\Master\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\Product\StoreMasterProductGroupRequest;
-use App\Http\Requests\Master\Product\UpdateMasterProductGroupRequest;
-use App\Http\Resources\Master\Product\MasterProductGroupCollection;
-use App\Http\Resources\Master\Product\MasterProductGroupResource;
+use App\Http\Requests\Master\Product\StoreMasterProductRequest;
+use App\Http\Requests\Master\Product\UpdateMasterProductRequest;
+use App\Http\Resources\Master\Product\MasterProductCollection;
+use App\Http\Resources\Master\Product\MasterProductResource;
 use App\Models\MasterProduct;
-use App\Models\MasterProductGroup;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class MasterProductGroupController extends Controller
+class MasterProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = MasterProductGroup::query()->orderBy('codeProductGroup', 'asc');
+        $query = MasterProduct::with(['group'])->orderBy('codeProduct', 'asc');
 
-        if (request('nameProductGroup')) {
-            $query->where("nameProductGroup", "like", "%" . request("nameProductGroup") . "%");
+        if (request('nameProduct')) {
+            $query->where("nameProduct", "like", "%" . request("nameProduct") . "%");
         }
 
-        $productGroups = $query->paginate(2);
-
+        $products = $query->paginate(10);
+        // dd($products);
         // $customPaginate = MyServices::customPaginate($articles);
 
-        if ($productGroups->isEmpty()) {
+        if ($products->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Raw Material Group Empty'
+                'message' => 'Products  Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return new MasterProductGroupCollection($productGroups);
+            return new MasterProductCollection($products);
         }
     }
 
@@ -52,14 +51,14 @@ class MasterProductGroupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMasterProductGroupRequest $request)
+    public function store(StoreMasterProductRequest $request)
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
-
+        // dd($data);
         try {
-            MasterProductGroup::create($data);
+            MasterProduct::create($data);
 
             return response()->json([
                 'status' => Response::HTTP_OK,
@@ -79,11 +78,11 @@ class MasterProductGroupController extends Controller
      */
     public function show($id)
     {
-        $masterProductGroup = MasterProductGroup::findOrFail($id);
-        // dd($masterProductGroup);
+        $masterProduct = MasterProduct::with('group')->findOrFail($id);
+        // dd($masterProduct);
 
         return response()->json([
-            'data' => new MasterProductGroupResource($masterProductGroup),
+            'data' => new MasterProductResource($masterProduct),
             'status' => Response::HTTP_OK,
         ], Response::HTTP_OK);
     }
@@ -91,7 +90,7 @@ class MasterProductGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MasterProductGroup $masterProductGroup)
+    public function edit(MasterProduct $masterProduct)
     {
         //
     }
@@ -99,19 +98,19 @@ class MasterProductGroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterProductGroupRequest $request, $id)
+    public function update(UpdateMasterProductRequest $request, $id)
     {
-        $masterProductGroup = MasterProductGroup::findOrFail($id);
-        $masterProductGroup['updated_by'] = Auth::id();
-        $origin = clone $masterProductGroup;
-        // dd(gettype($masterProductGroup));
+        $masterProduct = MasterProduct::with('group')->findOrFail($id);
+        $masterProduct['updated_by'] = Auth::id();
+        $origin = clone $masterProduct;
+        // dd($masterProduct);
         // 
-        $masterProductGroup->update($request->validated());
+        $masterProduct->update($request->validated());
 
         try {
             return response()->json([
-                'data' => new MasterProductGroupResource($masterProductGroup),
-                'message' => "Product Group type with name '$origin->nameProductGroup' has been changed  '$masterProductGroup->nameProductGroup'",
+                'data' => new MasterProductResource($masterProduct),
+                'message' => "Raw material type with name '$origin->nameProduct' has been changed  '$masterProduct->nameProduct'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -128,23 +127,23 @@ class MasterProductGroupController extends Controller
      */
     public function destroy($id)
     {
-        $productGroup = MasterProductGroup::find($id);
-        $origin = clone $productGroup;
+        $product = MasterProduct::find($id);
+        $origin = clone $product;
 
-        $exists = MasterProduct::where('codeProductGroup', $id)->exists();
+        $exists = MasterProduct::where('codeProduct', $id)->exists();
         // dd($exists);
-        if ($exists) {
-            return response()->json([
-                'message' => "Code Product Group type cannot be deleted because it is linked to a product",
-                'status' => Response::HTTP_FORBIDDEN
-            ], Response::HTTP_FORBIDDEN);
-        }
+        // if ($exists) {
+        //     return response()->json([
+        //         'message' => "Code Product  type cannot be deleted because it is linked to a product",
+        //         'status' => Response::HTTP_FORBIDDEN
+        //     ], Response::HTTP_FORBIDDEN);
+        // }
 
-        $productGroup->delete();
+        $product->delete();
 
         try {
             return response()->json([
-                'message' => "Product Group with name '$origin->nameProductGroup' has been deleted",
+                'message' => "Product  with name '$origin->nameProduct' has been deleted",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {

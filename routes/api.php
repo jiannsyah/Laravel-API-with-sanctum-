@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
+use App\Http\Controllers\API\V1\Master\Product\MasterProductController;
 use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
@@ -27,6 +28,7 @@ Route::prefix('V1')->group(function () {
             Route::resource('raw-material-group', MasterRawMaterialGroupController::class);
             Route::resource('raw-material', MasterRawMaterialController::class);
             Route::resource('product-group', MasterProductGroupController::class);
+            Route::resource('product', MasterProductController::class);
         });
 
         Route::get('/user', function (Request $request) {

@@ -12,11 +12,11 @@ class MasterProduct extends Model
 
     use HasUuids;
 
-    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
 
     public function group()
     {
-        return $this->belongsTo(MasterProductGroupGroup::class, 'codeProductGroup');
+        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup');
     }
 
     public function createdBy()
