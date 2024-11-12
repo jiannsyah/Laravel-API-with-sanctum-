@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MasterRawMaterial extends Model
 {
@@ -17,6 +18,10 @@ class MasterRawMaterial extends Model
     protected $attributes = [
         'brand' => 'LOCAL'
     ];
+
+    use SoftDeletes; // Mengaktifkan soft deletes
+
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     public function type()
     {

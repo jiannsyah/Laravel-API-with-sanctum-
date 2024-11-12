@@ -5,12 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MasterRawMaterialType extends Model
 {
     use HasFactory;
 
     use HasUuids;
+
+    use SoftDeletes; // Mengaktifkan soft deletes
+
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
 
