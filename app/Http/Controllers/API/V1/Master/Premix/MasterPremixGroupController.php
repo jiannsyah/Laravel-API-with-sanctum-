@@ -1,30 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Master\Product;
+namespace App\Http\Controllers\API\V1\Master\Premix;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\Product\StoreMasterProductGroupRequest;
-use App\Http\Requests\Master\Product\UpdateMasterProductGroupRequest;
-use App\Http\Resources\Master\Product\MasterProductGroupCollection;
-use App\Http\Resources\Master\Product\MasterProductGroupResource;
-use App\Models\MasterProduct;
-use App\Models\MasterProductGroup;
+use App\Http\Requests\Master\Premix\StoreMasterPremixGroupRequest;
+use App\Http\Requests\Master\Premix\UpdateMasterPremixGroupRequest;
+use App\Models\MasterPremixGroup;
+use App\Http\Resources\Master\Premix\MasterPremixGroupCollection;
+use App\Http\Resources\Master\Premix\MasterPremixGroupResource;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class MasterProductGroupController extends Controller
+class MasterPremixGroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = MasterProductGroup::query()->orderBy('codeProductGroup', 'asc');
+        $query = MasterPremixGroup::query()->orderBy('codePremixGroup', 'asc');
 
-        if (request('nameProductGroup')) {
-            $query->where("nameProductGroup", "like", "%" . request("nameProductGroup") . "%");
+        if (request('namePremixGroup')) {
+            $query->where("namePremixGroup", "like", "%" . request("namePremixGroup") . "%");
         }
 
         $productGroups = $query->paginate(2);
@@ -34,10 +33,10 @@ class MasterProductGroupController extends Controller
         if ($productGroups->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Product Group Empty'
+                'message' => 'Premix Groups Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return new MasterProductGroupCollection($productGroups);
+            return new MasterPremixGroupCollection($productGroups);
         }
     }
 
@@ -52,14 +51,14 @@ class MasterProductGroupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMasterProductGroupRequest $request)
+    public function store(StoreMasterPremixGroupRequest $request)
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
         try {
-            MasterProductGroup::create($data);
+            MasterPremixGroup::create($data);
 
             return response()->json([
                 'status' => Response::HTTP_OK,
@@ -79,11 +78,11 @@ class MasterProductGroupController extends Controller
      */
     public function show($id)
     {
-        $masterProductGroup = MasterProductGroup::findOrFail($id);
-        // dd($masterProductGroup);
+        $masterPremixGroup = MasterPremixGroup::findOrFail($id);
+        // dd($masterPremixGroup);
 
         return response()->json([
-            'data' => new MasterProductGroupResource($masterProductGroup),
+            'data' => new MasterPremixGroupResource($masterPremixGroup),
             'status' => Response::HTTP_OK,
         ], Response::HTTP_OK);
     }
@@ -91,7 +90,7 @@ class MasterProductGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MasterProductGroup $masterProductGroup)
+    public function edit(MasterPremixGroup $masterPremixGroup)
     {
         //
     }
@@ -99,19 +98,19 @@ class MasterProductGroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterProductGroupRequest $request, $id)
+    public function update(UpdateMasterPremixGroupRequest $request, $id)
     {
-        $masterProductGroup = MasterProductGroup::findOrFail($id);
-        $masterProductGroup['updated_by'] = Auth::id();
-        $origin = clone $masterProductGroup;
-        // dd(gettype($masterProductGroup));
+        $masterPremixGroup = MasterPremixGroup::findOrFail($id);
+        $masterPremixGroup['updated_by'] = Auth::id();
+        $origin = clone $masterPremixGroup;
+        // dd(gettype($masterPremixGroup));
         // 
-        $masterProductGroup->update($request->validated());
+        $masterPremixGroup->update($request->validated());
 
         try {
             return response()->json([
-                'data' => new MasterProductGroupResource($masterProductGroup),
-                'message' => "Product Group type with name '$origin->nameProductGroup' has been changed  '$masterProductGroup->nameProductGroup'",
+                'data' => new MasterPremixGroupResource($masterPremixGroup),
+                'message' => "Premix Group type with name '$origin->namePremixGroup' has been changed  '$masterPremixGroup->namePremixGroup'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -128,23 +127,23 @@ class MasterProductGroupController extends Controller
      */
     public function destroy($id)
     {
-        $productGroup = MasterProductGroup::find($id);
+        $productGroup = MasterPremixGroup::find($id);
         $origin = clone $productGroup;
 
-        $exists = MasterProduct::where('codeProductGroup', $id)->exists();
-        // dd($exists);
-        if ($exists) {
-            return response()->json([
-                'message' => "Code Product Group type cannot be deleted because it is linked to a product",
-                'status' => Response::HTTP_FORBIDDEN
-            ], Response::HTTP_FORBIDDEN);
-        }
+        // $exists = MasterPremix::where('codePremixGroup', $id)->exists();
+        // // dd($exists);
+        // if ($exists) {
+        //     return response()->json([
+        //         'message' => "Code Premix Group type cannot be deleted because it is linked to a product",
+        //         'status' => Response::HTTP_FORBIDDEN
+        //     ], Response::HTTP_FORBIDDEN);
+        // }
 
         $productGroup->delete();
 
         try {
             return response()->json([
-                'message' => "Product Group with name '$origin->nameProductGroup' has been deleted",
+                'message' => "Premix Group with name '$origin->namePremixGroup' has been deleted",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
