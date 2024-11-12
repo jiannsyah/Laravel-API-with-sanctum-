@@ -13,6 +13,11 @@ class MasterPremixGroup extends Model
 
     protected $fillable = ['codePremixGroup', 'namePremixGroup', 'created_by', 'updated_by'];
 
+    public function premixes()
+    {
+        return $this->hasMany(MasterPremix::class, 'codePremixGroup');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

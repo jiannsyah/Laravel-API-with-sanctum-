@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
+use App\Http\Controllers\API\V1\Master\Premix\MasterPremixController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixGroupController;
 use App\Http\Controllers\API\V1\Master\Product\MasterProductController;
 use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
@@ -33,6 +34,7 @@ Route::prefix('V1')->group(function () {
             Route::resource('product', MasterProductController::class);
             // 
             Route::resource('premix-group', MasterPremixGroupController::class);
+            Route::resource('premix', MasterPremixController::class);
         });
 
         Route::get('/user', function (Request $request) {
