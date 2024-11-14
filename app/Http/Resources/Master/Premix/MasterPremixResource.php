@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Master\Premix;
 
 use App\Http\Resources\UserResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +20,7 @@ class MasterPremixResource extends JsonResource
             'id' => $this->id,
             'codePremix' => $this->codePremix,
             'namePremix' => $this->namePremix,
-            'uniOfMeasurement' => $this->smallUnit,
+            'unitOfMeasurement' => $this->unitOfMeasurement,
             'status' => $this->status,
             // 
             'group' => $this->whenLoaded('group', function () {
@@ -28,6 +29,7 @@ class MasterPremixResource extends JsonResource
                     'namePremixGroup' => $this->group->namePremixGroup, // Mengembalikan hanya nama
                 ];
             }),
+            'deleted_at' => $this->deleted_at ? Carbon::parse($this->deleted_at)->format('Y-m-d H:i:s') : 'Not Deleted',
             'created_by' => new UserResource($this->createdBy),
         ];
     }

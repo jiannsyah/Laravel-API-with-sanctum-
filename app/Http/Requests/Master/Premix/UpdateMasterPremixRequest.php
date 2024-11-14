@@ -11,7 +11,13 @@ class UpdateMasterPremixRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'namePremix' => strtoupper($this->input('namePremix')),
+        ]);
     }
 
     /**
@@ -22,7 +28,9 @@ class UpdateMasterPremixRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'namePremix' => 'required|min:3',
+            'unitOfMeasurement' => 'in:BKS,GR',
+            'status' => 'in:Active,Non-Active',
         ];
     }
 }
