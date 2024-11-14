@@ -23,7 +23,7 @@ class MasterRawMaterialGroupSeeder extends Seeder
             'updated_by' => 1,
             'created_at' => now(),
             'updated_at' => now(),
-            'codeRawMaterialType' => 'd7dbd3f7-cfa3-4e5e-9e8a-9002d0a86daa'
+            'codeRawMaterialType' => '10'
         ]);
         DB::table('master_raw_material_groups')->insert([
             'id' => Str::uuid()->toString(),    // Mengisi UUID secara manual
@@ -34,7 +34,7 @@ class MasterRawMaterialGroupSeeder extends Seeder
             'updated_by' => 1,
             'created_at' => now(),
             'updated_at' => now(),
-            'codeRawMaterialType' => 'd7dbd3f7-cfa3-4e5e-9e8a-9002d0a86daa'
+            'codeRawMaterialType' => '10'
         ]);
     }
 }

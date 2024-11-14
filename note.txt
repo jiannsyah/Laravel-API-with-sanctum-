@@ -1,0 +1,8 @@
+menambahkan role & permission dengan spatie
+
+1.  melakukan php artisan migrate:refresh 
+2.  composer require spatie/laravel-permission
+3.  php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+4.  php artisan optimize:clear
+5.  php artisan migrate
+    otomatis akan menambahkan table role & permission

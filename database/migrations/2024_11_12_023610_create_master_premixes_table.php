@@ -61,7 +61,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->uuid('codePremixGroup'); // Kolom untuk foreign key
-            $table->foreign('codePremixGroup')->references('id')->on('master_premix_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
+            $table->foreign('codePremixGroup')->references('codePremixGroup')->on('master_premix_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
             // 
             $table->timestamps();
         });

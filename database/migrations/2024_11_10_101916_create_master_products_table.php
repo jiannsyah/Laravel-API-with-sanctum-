@@ -74,7 +74,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->uuid('codeProductGroup'); // Kolom untuk foreign key
-            $table->foreign('codeProductGroup')->references('id')->on('master_product_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
+            $table->foreign('codeProductGroup')->references('codeProductGroup')->on('master_product_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
             // 
 
             $table->timestamps();

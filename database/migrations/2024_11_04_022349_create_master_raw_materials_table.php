@@ -65,9 +65,9 @@ return new class extends Migration
             $table->foreignId('updated_by')->constrained('users');
             // 
             $table->uuid('codeRawMaterialGroup'); // Kolom untuk foreign key
-            $table->foreign('codeRawMaterialGroup')->references('id')->on('master_raw_material_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
+            $table->foreign('codeRawMaterialGroup')->references('codeRawMaterialGroup')->on('master_raw_material_groups')->onDelete('cascade'); // Menetapkan relasi ke tabel users
             $table->uuid('codeRawMaterialType'); // Kolom untuk foreign key
-            $table->foreign('codeRawMaterialType')->references('id')->on('master_raw_material_types')->onDelete('cascade'); // Menetapkan relasi ke tabel users
+            $table->foreign('codeRawMaterialType')->references('codeRawMaterialType')->on('master_raw_material_types')->onDelete('cascade'); // Menetapkan relasi ke tabel users
             // 
             $table->timestamps();
         });

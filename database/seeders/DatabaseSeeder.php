@@ -14,11 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Article::factory(10)->create();
+        // Article::factory(10)->create();
         $this->call(UsersTableSeeder::class);
         $this->call(MasterRawMaterialTypeSeeder::class);
         $this->call(MasterRawMaterialGroupSeeder::class);
-        // User::factory(10)->create();
+        $this->call(MasterRawMaterialSeeder::class);
+        // 
+        $this->call(MasterProductGroupSeeder::class);
+        $this->call(MasterProductSeeder::class);
+        // 
+        $this->call(MasterPremixGroupSeeder::class);
+        $this->call(MasterPremixSeeder::class);
 
         // User::factory()->create([
         //     'name' => 'Test User',
