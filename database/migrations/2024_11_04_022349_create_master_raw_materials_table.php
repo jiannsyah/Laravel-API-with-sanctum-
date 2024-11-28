@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('codeRawMaterial', 8)->unique();
             $table->string('nameRawMaterial', 255);
             $table->string('brand', 50)->default('LOCAL');
-            $table->enum('unitOfMeasurement', ['KG', 'LTR', 'PCS'])->default('KG');
+            $table->enum('unitOfMeasurement', ['KG', 'LTR'])->default('KG');
             $table->enum('status', ['Active', 'Non-Active'])->default('Active');
             // 
             $table->decimal('costPrice', 12, 2)->default(0);

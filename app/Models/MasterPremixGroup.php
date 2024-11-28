@@ -14,6 +14,7 @@ class MasterPremixGroup extends Model
     use SoftDeletes; // Mengaktifkan soft deletes
 
     protected $fillable = ['codePremixGroup', 'namePremixGroup', 'created_by', 'updated_by'];
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     public function premixes()
     {

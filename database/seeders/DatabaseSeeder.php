@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         // 
         $this->call(MasterPremixGroupSeeder::class);
         $this->call(MasterPremixSeeder::class);
+        $this->call(MasterPremixFormulaSeeder::class);
 
         // User::factory()->create([
         //     'name' => 'Test User',

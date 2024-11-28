@@ -7,20 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterProduct extends Model
+class MasterProductFormulaMain extends Model
 {
     use HasFactory;
-
     use HasUuids;
-
-    use SoftDeletes; // Mengaktifkan soft deletes
-
-    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
+    use SoftDeletes;
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    public function group()
+    public function ingredients()
     {
-        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup');
+        return $this->hasMany(MasterProductFormulaIngredients::class, 'codeProductFormula');
     }
 
     public function createdBy()

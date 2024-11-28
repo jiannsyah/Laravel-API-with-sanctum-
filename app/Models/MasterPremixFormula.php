@@ -7,20 +7,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterProduct extends Model
+class MasterPremixFormula extends Model
 {
     use HasFactory;
-
     use HasUuids;
-
     use SoftDeletes; // Mengaktifkan soft deletes
 
-    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
+    protected $fillable = ['codePremix', 'squenceNumber', 'quantity', 'unitOfMeasurement', 'created_by', 'updated_by'];
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    public function group()
+    public function premix()
     {
-        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup');
+        return $this->belongsTo(MasterPremix::class, 'codePremix');
+    }
+
+    public function rawMaterialGroups()
+    {
+        return $this->belongsTo(MasterRawMaterialGroup::class, 'codeRawMaterialGroup');
     }
 
     public function createdBy()

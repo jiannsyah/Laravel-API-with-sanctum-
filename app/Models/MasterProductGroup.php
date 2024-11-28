@@ -14,6 +14,7 @@ class MasterProductGroup extends Model
     use SoftDeletes; // Mengaktifkan soft deletes
 
     protected $fillable = ['codeProductGroup', 'nameProductGroup', 'created_by', 'updated_by'];
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
 
     public function products()

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 
-class ArticleCollection extends ResourceCollection
+class UserCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,20 +16,12 @@ class ArticleCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-
             'status' => Response::HTTP_OK,
-            'message' => 'List Articles',
+            'message' => 'List Product Groups',
             'queryParams' => request()->query() ?: null,
-            'data' => $this->collection->transform(function ($articles) {
-                return new ArticleResource($articles);
+            'data' => $this->collection->transform(function ($users) {
+                return new UserResource($users);
             })
-
         ];
     }
 }
-
-// return response()->json([
-//     'data' => ArticleResource::collection($articles),
-//     'paginate' => $customPaginate,
-//     'status' => Response::HTTP_OK,
-// ], Response::HTTP_OK);

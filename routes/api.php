@@ -9,6 +9,7 @@ use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;
+use App\Http\Controllers\API\V1\User\UserController;
 use App\Http\Middleware\CheckPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,6 @@ Route::prefix('V1')->group(function () {
     // 
     Route::middleware('auth:sanctum')->group(function () {
         Route::middleware([CheckPermission::class])->group(function () {
-            Route::resource('article', ArticleController::class);
             Route::resource('raw-material-type', MasterRawMaterialTypeController::class);
             Route::resource('raw-material-group', MasterRawMaterialGroupController::class);
             Route::resource('raw-material', MasterRawMaterialController::class);
@@ -35,11 +35,17 @@ Route::prefix('V1')->group(function () {
             // 
             Route::resource('premix-group', MasterPremixGroupController::class);
             Route::resource('premix', MasterPremixController::class);
+            // 
+            Route::middleware(['role:admin'])->group(function () {
+                Route::resource('user', UserController::class);
+            });
+            // 
+
         });
 
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        });
+        // Route::get('/user', function (Request $request) {
+        //     return $request->user();
+        // });
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });

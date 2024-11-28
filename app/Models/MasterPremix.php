@@ -23,6 +23,11 @@ class MasterPremix extends Model
         return $this->belongsTo(MasterPremixGroup::class, 'codePremixGroup');
     }
 
+    public function formulas()
+    {
+        return $this->hasMany(MasterPremixFormula::class, 'codePremix');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -29,6 +29,11 @@ class MasterRawMaterialGroup extends Model
         return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialGroup');
     }
 
+    public function premixFormula()
+    {
+        return $this->belongsTo(MasterPremixFormula::class, 'codeRawMaterialGroup');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
