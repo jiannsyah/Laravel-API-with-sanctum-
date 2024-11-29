@@ -59,7 +59,6 @@ class StoreMasterRawMaterialRequest extends FormRequest
             // 
             'codeRawMaterialGroup' => 'required',
             'codeRawMaterialType' => 'required'
-            // 'unitOfMeasurement' => ['required', new Enum(UOMType::class)],
         ];
     }
 }

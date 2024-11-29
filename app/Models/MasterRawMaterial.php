@@ -25,7 +25,7 @@ class MasterRawMaterial extends Model
 
     public function type()
     {
-        return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType');
+        return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType', 'codeRawMaterialType');
     }
 
     public function group()

@@ -17,7 +17,7 @@ class MasterProductFormulaIngredients extends Model
 
     public function main()
     {
-        return $this->belongsTo(MasterProductFormulaMain::class, 'codeProductFormula');
+        return $this->belongsTo(MasterProductFormulaMain::class, 'codeProductFormula', 'codeProductFormula');
     }
 
     public function createdBy()

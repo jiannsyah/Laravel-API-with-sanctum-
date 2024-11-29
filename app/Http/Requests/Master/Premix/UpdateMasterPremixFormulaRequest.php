@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Master\RawMaterial;
+namespace App\Http\Requests\Master\Premix;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMasterRawMaterialGroupRequest extends FormRequest
+class UpdateMasterPremixFormulaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,8 +22,7 @@ class UpdateMasterRawMaterialGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nameRawMaterialGroup' => 'required|min:3|max:50',
-            'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
+            //
         ];
     }
 }

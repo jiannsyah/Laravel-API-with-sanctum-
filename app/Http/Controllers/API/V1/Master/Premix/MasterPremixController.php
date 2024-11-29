@@ -13,10 +13,46 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @OA\Info(title="Docs", version="1.0.0")
+ */
+
 class MasterPremixController extends Controller
 {
     /**
      * Display a listing of the resource.
+     */
+
+    /**
+     * @OA\Get(
+     *     path="/api/V1/premix", 
+     *     summary="Get list Premixes",
+     *     security={
+     *        {"bearer": {}}
+     *     },
+
+     *     tags={"Premixes"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success", 
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", example="uuid"),
+     *                 @OA\Property(property="codePremix", type="string", example="code"),
+     *                 @OA\Property(property="namePremix", type="string", example="namePremix"),
+     *                 @OA\Property(property="unitOfMeasurement", type="string", example="unitOfMeasurement"),
+     *                 @OA\Property(property="status", type="string", example="status"),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
      */
     public function index()
     {
