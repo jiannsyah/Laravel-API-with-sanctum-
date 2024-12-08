@@ -6,7 +6,7 @@ services:
       context: .
     container_name: mis-be-laravel
     ports:
-      - "8000:9000"
+      - "9000:9000"
     depends_on:
       - db
     volumes:
