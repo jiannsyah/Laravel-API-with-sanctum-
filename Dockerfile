@@ -32,7 +32,7 @@ RUN php artisan config:cache && \
 RUN chmod -R 775 storage bootstrap/cache
 
 # Expose port aplikasi
-EXPOSE 8000
+EXPOSE 9000
 
 # Jalankan Laravel
 CMD ["php-fpm"]
