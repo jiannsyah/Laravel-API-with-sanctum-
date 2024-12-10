@@ -6,11 +6,11 @@ services:
       context: .
     container_name: mis-be-laravel
     ports:
-      - "9000:9000"
+      - "8000:8000"
     depends_on:
       - db
     volumes:
-      - .:/var/www/html
+      - .:/app
     environment:
       APP_ENV: ${APP_ENV}
       APP_DEBUG: ${APP_DEBUG}

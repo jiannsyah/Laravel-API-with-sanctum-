@@ -1,38 +1,30 @@
-FROM php:8.2-fpm
+# Gunakan image FrankenPHP resmi
+FROM dunglas/frankenphp
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install ekstensi PHP tambahan (sesuaikan dengan kebutuhan)
+RUN install-php-extensions \
+    pdo_mysql \
+    pcntl \
+    mbstring \
+    bcmath \
+    exif \
+    gd
+
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
-# Copy seluruh aplikasi Laravel ke dalam container
-COPY . .
+# Salin semua file aplikasi Laravel ke dalam container
+COPY . /app
 
-# Install dependencies Laravel dalam mode produksi
+# Install dependencies Laravel menggunakan Composer
 RUN composer install --optimize-autoloader --no-dev
 
-# Optimize Laravel
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# Optimisasi konfigurasi Laravel
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
-# Set permission untuk folder storage dan cache
-RUN chmod -R 775 storage bootstrap/cache
-
-# Expose port aplikasi
-EXPOSE 9000
-
-# Jalankan Laravel
-CMD ["php-fpm"]
+# Jalankan Laravel Octane menggunakan FrankenPHP
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
