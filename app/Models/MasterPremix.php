@@ -20,7 +20,7 @@ class MasterPremix extends Model
 
     public function group()
     {
-        return $this->belongsTo(MasterPremixGroup::class, 'codePremixGroup');
+        return $this->belongsTo(MasterPremixGroup::class, 'codePremixGroup', 'codePremixGroup');
     }
 
     public function formulas()

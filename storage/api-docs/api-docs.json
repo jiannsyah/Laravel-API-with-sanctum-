@@ -1,0 +1,160 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Docs",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/V1/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user",
+                "description": "Login dengan email dan password untuk mendapatkan token Bearer",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "jian"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "jianaja@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123.321A"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil, token diberikan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "your_generated_token"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized, login gagal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/V1/premix": {
+            "get": {
+                "tags": [
+                    "Premixes"
+                ],
+                "summary": "Get list Premixes",
+                "operationId": "666a88c7a841ab7cd43985802b119d1f",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "example": "uuid"
+                                            },
+                                            "codePremix": {
+                                                "type": "string",
+                                                "example": "code"
+                                            },
+                                            "namePremix": {
+                                                "type": "string",
+                                                "example": "namePremix"
+                                            },
+                                            "unitOfMeasurement": {
+                                                "type": "string",
+                                                "example": "unitOfMeasurement"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "status"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Premixes",
+            "description": "Premixes"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearer": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        [
+            {
+                "name": "Authorization",
+                "type": "apiKey",
+                "in": "header"
+            }
+        ]
+    ]
+}

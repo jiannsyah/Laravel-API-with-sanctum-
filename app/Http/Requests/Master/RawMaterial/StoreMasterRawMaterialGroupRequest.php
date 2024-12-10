@@ -4,7 +4,6 @@ namespace App\Http\Requests\Master\RawMaterial;
 
 use App\Models\MasterRawMaterialGroup;
 use App\Models\MasterRawMaterialType;
-use App\UOMType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -56,7 +55,6 @@ class StoreMasterRawMaterialGroupRequest extends FormRequest
             'nameRawMaterialGroup' => 'required|min:3|max:50',
             'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
             'codeRawMaterialType' => 'required'
-            // 'unitOfMeasurement' => ['required', new Enum(UOMType::class)],
         ];
     }
 }

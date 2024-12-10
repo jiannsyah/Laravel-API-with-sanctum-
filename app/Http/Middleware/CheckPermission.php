@@ -17,9 +17,15 @@ class CheckPermission
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken();
-        if (!$token) {
+        $pass = Auth::guard('sanctum')->check();
+        // $user = Auth::user();
+
+        // if($user){
+
+        // }else
+        if (!$token || !$pass) {
             return response()->json([
-                'message' => 'Token not exists, please login first'
+                'message' => 'Token not exists or wrong, please login or check first'
             ], Response::HTTP_UNAUTHORIZED);
         }
 

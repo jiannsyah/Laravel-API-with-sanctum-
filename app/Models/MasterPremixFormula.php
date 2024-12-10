@@ -18,12 +18,12 @@ class MasterPremixFormula extends Model
 
     public function premix()
     {
-        return $this->belongsTo(MasterPremix::class, 'codePremix');
+        return $this->belongsTo(MasterPremix::class, 'codePremix', 'codePremix');
     }
 
     public function rawMaterialGroups()
     {
-        return $this->belongsTo(MasterRawMaterialGroup::class, 'codeRawMaterialGroup');
+        return $this->belongsTo(MasterRawMaterialGroup::class, 'codeRawMaterialGroup', 'codeRawMaterialGroup');
     }
 
     public function createdBy()
