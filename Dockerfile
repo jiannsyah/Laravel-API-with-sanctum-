@@ -1,30 +1,19 @@
-# Gunakan image FrankenPHP resmi
-FROM dunglas/frankenphp
+FROM php:8.2-alpine
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Install ekstensi PHP tambahan (sesuaikan dengan kebutuhan)
-RUN install-php-extensions \
-    pdo_mysql \
-    pcntl \
-    mbstring \
-    bcmath \
-    exif \
-    gd
+RUN install-php-extensions pcntl sockets
 
-# Set working directory
-WORKDIR /app
+COPY . /var/www
+COPY .env.example /var/www/.env
 
-# Salin semua file aplikasi Laravel ke dalam container
-COPY . /app
+WORKDIR /var/www
 
-# Install dependencies Laravel menggunakan Composer
-RUN composer install --optimize-autoloader --no-dev
+RUN apk add jq
 
-# Optimisasi konfigurasi Laravel
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+RUN wget -O/usr/local/bin/frankenphp $(wget -O- https://api.github.com/repos/dunglas/frankenphp/releases/latest | jq '.assets[] | select(.name=="frankenphp-linux-x86_64") | .browser_download_url' -r) && chmod +x /usr/local/bin/frankenphp
 
-# Jalankan Laravel Octane menggunakan FrankenPHP
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+RUN composer install --no-dev
+
+ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--port=8000", "--workers=16", "--host=0.0.0.0"]
