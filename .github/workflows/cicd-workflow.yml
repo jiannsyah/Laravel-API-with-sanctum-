@@ -3,7 +3,7 @@ name: MIS Laravel CICD
 on:
   push:
     branches:
-      - setup-deployment
+      - master
 
 jobs:
   build:
