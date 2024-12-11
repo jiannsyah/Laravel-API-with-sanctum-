@@ -19,7 +19,7 @@ class CheckPermission
         $token = $request->bearerToken();
         if (!$token) {
             return response()->json([
-                'message' => 'Token not exists, please login first'
+                'message' => 'Token not exists, please login first GUYS'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
