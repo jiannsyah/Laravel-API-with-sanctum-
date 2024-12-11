@@ -1,0 +1,32 @@
+name: MIS Laravel CICD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Create .env file
+        run: echo "${{ secrets.PROD_ENV_FILE }}" > .env
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker Images
+        run: docker build -t aristione/mis-be-laravel .
+      - name: Publish Image Docker
+        run: docker push aristione/mis-be-laravel:latest
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted]
+    steps:
+      - name: Pull Images from Docker Hub
+        run: docker pull aristione/mis-be-laravel:latest
+      - name: Stop and Remove old container
+        run: docker compose down
+      - name: Build and Running Docker
+        run: docker compose up --build -d
