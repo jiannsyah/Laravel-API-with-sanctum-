@@ -21,7 +21,7 @@ class MasterRawMaterialGroup extends Model
 
     public function type()
     {
-        return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType');
+        return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType', 'codeRawMaterialType');
     }
 
     public function materials()
@@ -31,7 +31,7 @@ class MasterRawMaterialGroup extends Model
 
     public function premixFormula()
     {
-        return $this->belongsTo(MasterPremixFormula::class, 'codeRawMaterialGroup');
+        return $this->belongsTo(MasterPremixFormula::class, 'codeRawMaterialGroup', 'codeRawMaterialGroup');
     }
 
     public function createdBy()

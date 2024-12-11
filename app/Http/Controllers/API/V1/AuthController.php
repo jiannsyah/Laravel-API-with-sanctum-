@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -50,7 +49,38 @@ class AuthController extends Controller
             //throw $th;
         }
     }
-
+    /**
+     * @OA\Post(
+     *     path="/api/V1/login",
+     *     summary="Login user",
+     *     description="Login dengan email dan password untuk mendapatkan token Bearer",
+     *     operationId="login",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="jian"),
+     *             @OA\Property(property="email", type="string", example="jianaja@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="123.321A")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login berhasil, token diberikan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="token", type="string", example="your_generated_token")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized, login gagal",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *         )
+     *     )
+     * )
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');

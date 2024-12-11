@@ -20,7 +20,7 @@ class MasterProduct extends Model
 
     public function group()
     {
-        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup');
+        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup', 'codeProductGroup');
     }
 
     public function createdBy()
