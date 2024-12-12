@@ -9,6 +9,7 @@ use App\Http\Resources\Master\Premix\MasterPremixCollection;
 use App\Http\Resources\Master\Premix\MasterPremixResource;
 use App\Models\MasterPremix;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -31,8 +32,13 @@ class MasterPremixController extends Controller
      *     security={
      *        {"bearer": {}}
      *     },
-
-     *     tags={"Premixes"},
+     *     tags={"Premix"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number for pagination",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
      *     @OA\Response(
      *         response=200,
      *         description="Success", 
@@ -45,6 +51,13 @@ class MasterPremixController extends Controller
      *                 @OA\Property(property="namePremix", type="string", example="namePremix"),
      *                 @OA\Property(property="unitOfMeasurement", type="string", example="unitOfMeasurement"),
      *                 @OA\Property(property="status", type="string", example="status"),
+     *         @OA\Property(
+     *         property="group",
+     *         type="object",
+     *         @OA\Property(property="codePremixGroup", type="string", example="codePremixGroup"),
+     *         @OA\Property(property="namePremixGroup", type="string", example="namePremixGroup"),
+     *     ),
+     *                 @OA\Property(property="created_by", type="string", example="created_by"),
      *             )
      *         )
      *     ),
@@ -93,6 +106,53 @@ class MasterPremixController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    /**
+     * @OA\Post(
+     *     path="/api/V1/premix",
+     *     summary="Create a new Premix",
+     *     description="Create a new premix entry",
+     *     operationId="createPremix",
+     *     tags={"Premix"},
+     *     security={
+     *        {"bearer": {}}
+     *     },
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Premix object that needs to be created",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"codePremix","namePremix","codePremixGroup"},
+     *             @OA\Property(property="codePremix", type="string", example="4000103"),
+     *             @OA\Property(property="namePremix", type="string", example="PREMIX-1C"),
+     *             @OA\Property(property="codePremixGroup", type="string", example="40001"),
+     *             @OA\Property(property="unitOfMeasurement", type="string", example="BKS"),
+     *             @OA\Property(property="status", type="string", example="Active"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data stored to dbd",
+
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed Data stored to dbd",
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Premix already exists",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Premix already exists"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="codePremix", type="array", items=@OA\Items(type="string"), example={"Premix already exists"})
+     *             )
+     *         )
+     *     ),
+     * 
+     * )
+     */
+
     public function store(StoreMasterPremixRequest $request)
     {
         $data = $request->validated();
@@ -118,7 +178,50 @@ class MasterPremixController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    /**
+     * @OA\Get(
+     *     path="/api/V1/premix/{id}", 
+     *     summary="Get Premix by ID",
+     *     security={
+     *        {"bearer": {}}
+     *     },
+     *     tags={"Premix"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the premix",
+     *         @OA\Schema(type="string", example="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success", 
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", example="uuid"),
+     *                 @OA\Property(property="codePremix", type="string", example="code"),
+     *                 @OA\Property(property="namePremix", type="string", example="namePremix"),
+     *                 @OA\Property(property="unitOfMeasurement", type="string", example="unitOfMeasurement"),
+     *                 @OA\Property(property="status", type="string", example="status"),
+     *         @OA\Property(
+     *         property="group",
+     *         type="object",
+     *         @OA\Property(property="codePremixGroup", type="string", example="codePremixGroup"),
+     *         @OA\Property(property="namePremixGroup", type="string", example="namePremixGroup"),
+     *     ),
+     *                 @OA\Property(property="created_by", type="string", example="created_by"),
+
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
+     */    public function show($id)
     {
         $masterPremix = MasterPremix::with('group')->findOrFail($id);
         // dd($masterPremix);
@@ -140,6 +243,57 @@ class MasterPremixController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+    /**
+     * @OA\Put(
+     *     path="/api/V1/premix/{id}",
+     *     summary="Update a Premix",
+     *     description="Update a premix entry",
+     *     operationId="updatePremix",
+     *     tags={"Premix"},
+     *     security={
+     *        {"bearer": {}}
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Premix with ID to be updated",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Premix object that needs to be updated",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"namePremix"},
+     *             @OA\Property(property="namePremix", type="string", example="PREMIX-1C"),
+     *             @OA\Property(property="unitOfMeasurement", type="string", example="BKS"),
+     *             @OA\Property(property="status", type="string", example="Active"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Premix has been changed  ",
+
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed Data stored to dbd",
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Premix already exists",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Premix already exists"),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="codePremix", type="array", items=@OA\Items(type="string"), example={"Premix already exists"})
+     *             )
+     *         )
+     *     ),
+     * 
+     * )
+     */
     public function update(UpdateMasterPremixRequest $request, $id)
     {
         $masterPremix = MasterPremix::with('group')->findOrFail($id);
@@ -152,7 +306,7 @@ class MasterPremixController extends Controller
         try {
             return response()->json([
                 'data' => new MasterPremixResource($masterPremix),
-                'message' => "Premix type with name '$origin->namePremix' has been changed  '$masterPremix->namePremix'",
+                'message' => "Premix with name '$origin->namePremix' has been changed  '$masterPremix->namePremix'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -166,6 +320,35 @@ class MasterPremixController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     */
+
+    /**
+     * @OA\Delete(
+     *     path="/api/V1/premix/{id}",
+     *     summary="Delete a Premix",
+     *     description="Delete a premix entry",
+     *     operationId="deletePremix",
+     *     tags={"Premix"},
+     *     security={
+     *        {"bearer": {}}
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Premix with ID to be updated",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Premix has been deleted",
+
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed Premix deleted",
+     *     ),
+     * )
      */
     public function destroy($id)
     {
