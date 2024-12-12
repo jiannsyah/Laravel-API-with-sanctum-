@@ -51,7 +51,6 @@ class StoreMasterPremixRequest extends FormRequest
         $this->merge([
             'codePremix' => strtoupper($this->input('codePremix')),
             'namePremix' => strtoupper($this->input('namePremix')),
-            'codePremixGroup' => $IdPremixGroup
         ]);
     }
 
@@ -63,7 +62,7 @@ class StoreMasterPremixRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codePremix' => 'required|max:8',
+            'codePremix' => 'required|unique|max:8',
             'namePremix' => 'required|min:3',
             'unitOfMeasurement' => 'in:BKS,GR',
             'status' => 'in:Active,Non-Active',

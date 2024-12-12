@@ -76,7 +76,7 @@
         "/api/V1/premix": {
             "get": {
                 "tags": [
-                    "Premixes"
+                    "Premix"
                 ],
                 "summary": "Get list Premixes",
                 "operationId": "666a88c7a841ab7cd43985802b119d1f",
@@ -108,6 +108,23 @@
                                             "status": {
                                                 "type": "string",
                                                 "example": "status"
+                                            },
+                                            "group": {
+                                                "properties": {
+                                                    "codePremixGroup": {
+                                                        "type": "string",
+                                                        "example": "codePremixGroup"
+                                                    },
+                                                    "namePremixGroup": {
+                                                        "type": "string",
+                                                        "example": "namePremixGroup"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "created_by": {
+                                                "type": "string",
+                                                "example": "created_by"
                                             }
                                         },
                                         "type": "object"
@@ -125,6 +142,300 @@
                         "bearer": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Premix"
+                ],
+                "summary": "Create a new Premix",
+                "description": "Create a new premix entry",
+                "operationId": "createPremix",
+                "requestBody": {
+                    "description": "Premix object that needs to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codePremix",
+                                    "namePremix",
+                                    "codePremixGroup"
+                                ],
+                                "properties": {
+                                    "codePremix": {
+                                        "type": "string",
+                                        "example": "4000103"
+                                    },
+                                    "namePremix": {
+                                        "type": "string",
+                                        "example": "PREMIX-1C"
+                                    },
+                                    "codePremixGroup": {
+                                        "type": "string",
+                                        "example": "40001"
+                                    },
+                                    "unitOfMeasurement": {
+                                        "type": "string",
+                                        "example": "BKS"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "Active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Data stored to dbd"
+                    },
+                    "500": {
+                        "description": "Failed Data stored to dbd"
+                    },
+                    "422": {
+                        "description": "Premix already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Premix already exists"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "codePremix": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "Premix already exists"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/V1/premix/{id}": {
+            "get": {
+                "tags": [
+                    "Premix"
+                ],
+                "summary": "Get Premix by ID",
+                "operationId": "93293f6e49ea100547f50a5fcccdd2c1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the premix",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "example": "uuid"
+                                            },
+                                            "codePremix": {
+                                                "type": "string",
+                                                "example": "code"
+                                            },
+                                            "namePremix": {
+                                                "type": "string",
+                                                "example": "namePremix"
+                                            },
+                                            "unitOfMeasurement": {
+                                                "type": "string",
+                                                "example": "unitOfMeasurement"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "status"
+                                            },
+                                            "group": {
+                                                "properties": {
+                                                    "codePremixGroup": {
+                                                        "type": "string",
+                                                        "example": "codePremixGroup"
+                                                    },
+                                                    "namePremixGroup": {
+                                                        "type": "string",
+                                                        "example": "namePremixGroup"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "created_by": {
+                                                "type": "string",
+                                                "example": "created_by"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Premix"
+                ],
+                "summary": "Update a Premix",
+                "description": "Update a premix entry",
+                "operationId": "updatePremix",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Premix with ID to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Premix object that needs to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "namePremix"
+                                ],
+                                "properties": {
+                                    "namePremix": {
+                                        "type": "string",
+                                        "example": "PREMIX-1C"
+                                    },
+                                    "unitOfMeasurement": {
+                                        "type": "string",
+                                        "example": "BKS"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "Active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Premix has been changed  "
+                    },
+                    "500": {
+                        "description": "Failed Data stored to dbd"
+                    },
+                    "422": {
+                        "description": "Premix already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Premix already exists"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "codePremix": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "Premix already exists"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Premix"
+                ],
+                "summary": "Delete a Premix",
+                "description": "Delete a premix entry",
+                "operationId": "deletePremix",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Premix with ID to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Premix has been deleted"
+                    },
+                    "500": {
+                        "description": "Failed Premix deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
             }
         }
     },
@@ -134,8 +445,8 @@
             "description": "Auth"
         },
         {
-            "name": "Premixes",
-            "description": "Premixes"
+            "name": "Premix",
+            "description": "Premix"
         }
     ],
     "components": {
