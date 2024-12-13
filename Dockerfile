@@ -6,7 +6,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN install-php-extensions pcntl sockets
 
 COPY . /var/www
-COPY .env.example /var/www/.env
+COPY .env /var/www/.env
 
 WORKDIR /var/www
 
