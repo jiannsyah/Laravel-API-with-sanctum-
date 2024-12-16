@@ -3,10 +3,10 @@ FROM php:8.2-alpine
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-RUN install-php-extensions pcntl sockets
+RUN install-php-extensions pcntl sockets pdo_mysql
 
 COPY . /var/www
-COPY .env.example /var/www/.env
+COPY .env /var/www/.env
 
 WORKDIR /var/www
 

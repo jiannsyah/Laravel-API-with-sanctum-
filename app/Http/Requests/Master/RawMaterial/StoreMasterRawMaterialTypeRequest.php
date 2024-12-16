@@ -4,6 +4,7 @@ namespace App\Http\Requests\Master\RawMaterial;
 
 use App\Models\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class StoreMasterRawMaterialTypeRequest extends FormRequest
@@ -27,14 +28,16 @@ class StoreMasterRawMaterialTypeRequest extends FormRequest
         $next_code = strval((int)$latest_code->codeRawMaterialType + 10);
 
         $this->merge([
-            'codeRawMaterialType' => $next_code
+            'codeRawMaterialType' => $next_code,
+            'nameRawMaterialType' => strtoupper($this->input('nameRawMaterialType')),
+
         ]);
     }
 
     public function rules(): array
     {
         return [
-            'codeRawMaterialType' => 'required',
+            'codeRawMaterialType' =>  ['required', Rule::unique('master_raw_material_types')->whereNull('deleted_at')],
             'nameRawMaterialType' => 'required|min:3|max:50',
         ];
     }

@@ -30,7 +30,7 @@ class MasterPremixController extends Controller
      *     path="/api/V1/premix", 
      *     summary="Get list Premixes",
      *     security={
-     *        {"bearer": {}}
+     *        {"bearerAuth": {}}
      *     },
      *     tags={"Premix"},
      *     @OA\Parameter(
@@ -39,6 +39,7 @@ class MasterPremixController extends Controller
      *         description="Page number for pagination",
      *         required=false,
      *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Success", 
@@ -51,13 +52,13 @@ class MasterPremixController extends Controller
      *                 @OA\Property(property="namePremix", type="string", example="namePremix"),
      *                 @OA\Property(property="unitOfMeasurement", type="string", example="unitOfMeasurement"),
      *                 @OA\Property(property="status", type="string", example="status"),
-     *         @OA\Property(
-     *         property="group",
-     *         type="object",
-     *         @OA\Property(property="codePremixGroup", type="string", example="codePremixGroup"),
-     *         @OA\Property(property="namePremixGroup", type="string", example="namePremixGroup"),
-     *     ),
-     *                 @OA\Property(property="created_by", type="string", example="created_by"),
+     *                 @OA\Property(
+     *                     property="group",
+     *                     type="object",
+     *                     @OA\Property(property="codePremixGroup", type="string", example="codePremixGroup"),
+     *                     @OA\Property(property="namePremixGroup", type="string", example="namePremixGroup"),
+     *                 ),
+     *                 @OA\Property(property="created_by", type="string", example="created_by")
      *             )
      *         )
      *     ),
@@ -67,6 +68,7 @@ class MasterPremixController extends Controller
      *     )
      * )
      */
+
     public function index()
     {
         $user = Auth::user();
@@ -160,6 +162,19 @@ class MasterPremixController extends Controller
         $data['updated_by'] = Auth::id();
         // dd($data);
         try {
+            $premix = MasterPremix::withTrashed()->where('codePremix', $request->codePremix)->first();
+
+            if ($premix) {
+                $premix->restore();
+                $premix->update($request->validated());
+
+                return response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'Data restored to dbd'
+                ], Response::HTTP_OK);
+            }
+            // akhir penerapan soft delete
+
             MasterPremix::create($data);
 
             return response()->json([
@@ -352,18 +367,6 @@ class MasterPremixController extends Controller
      */
     public function destroy($id)
     {
-        // $user = Auth::user();
-        // if (strtoupper($user['name']) === strtoupper('jian')) {
-        //     // dd($user['name']);
-        //     // # code...
-        //     $premix = MasterPremix::withTrashed()->find($id);
-        //     $origin = clone $premix;
-        //     $premix->forceDelete();
-        // } else {
-        //     $premix = MasterPremix::find($id);
-        //     $origin = clone $premix;
-        //     $premix->delete();
-        // }
         $premix = MasterPremix::find($id);
         $origin = clone $premix;
 

@@ -8,6 +8,7 @@ use App\Http\Requests\Master\Premix\UpdateMasterPremixGroupRequest;
 use App\Models\MasterPremixGroup;
 use App\Http\Resources\Master\Premix\MasterPremixGroupCollection;
 use App\Http\Resources\Master\Premix\MasterPremixGroupResource;
+use App\Models\MasterPremix;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,48 @@ class MasterPremixGroupController extends Controller
     /**
      * Display a listing of the resource.
      */
+    /**
+     * @OA\Get(
+     *     path="/api/V1/premix-group", 
+     *     summary="Get list Premix Groups",
+     *     security={
+     *        {"bearerAuth": {}}
+     *     },
+     *     tags={"PremixGroup"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number for pagination",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success", 
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", example="uuid"),
+     *                 @OA\Property(property="codePremixGroup", type="string", example="code"),
+     *                 @OA\Property(property="namePremixGroup", type="string", example="namePremix"),
+     *                 @OA\Property(property="status", type="string", example="status"),
+     *                 @OA\Property(
+     *                     property="created_by",
+     *                     type="object",
+     *                     @OA\Property(property="name", type="string", example="name"),
+     *                     @OA\Property(property="email", type="string", example="email")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
+     */
+
     public function index()
     {
         $query = MasterPremixGroup::query()->orderBy('codePremixGroup', 'asc');
@@ -26,7 +69,7 @@ class MasterPremixGroupController extends Controller
             $query->where("namePremixGroup", "like", "%" . request("namePremixGroup") . "%");
         }
 
-        $productGroups = $query->paginate(2);
+        $productGroups = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
@@ -58,6 +101,20 @@ class MasterPremixGroupController extends Controller
         $data['updated_by'] = Auth::id();
 
         try {
+            // Cek apakah data dengan `codePremix` sudah ada (termasuk yang terhapus)
+            // karena menerapkan soft delete
+            $premix = MasterPremixGroup::withTrashed()->where('codePremixGroup', $request->codePremixGroup)->first();
+
+            if ($premix) {
+                $premix->restore();
+                $premix->update($request->validated());
+
+                return response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'Data restored to dbd'
+                ], Response::HTTP_OK);
+            }
+            // akhir penerapan soft delete
             MasterPremixGroup::create($data);
 
             return response()->json([
@@ -128,16 +185,17 @@ class MasterPremixGroupController extends Controller
     public function destroy($id)
     {
         $productGroup = MasterPremixGroup::find($id);
-        $origin = clone $productGroup;
+        // dd($productGroup);
+        $origin = $productGroup;
 
-        // $exists = MasterPremix::where('codePremixGroup', $id)->exists();
-        // // dd($exists);
-        // if ($exists) {
-        //     return response()->json([
-        //         'message' => "Code Premix Group type cannot be deleted because it is linked to a product",
-        //         'status' => Response::HTTP_FORBIDDEN
-        //     ], Response::HTTP_FORBIDDEN);
-        // }
+        $exists = MasterPremix::where('codePremixGroup', $productGroup['codePremixGroup'])->exists();
+        // dd($exists);
+        if ($exists) {
+            return response()->json([
+                'message' => "Code Premix Group cannot be deleted because it is linked to a premix",
+                'status' => Response::HTTP_FORBIDDEN
+            ], Response::HTTP_FORBIDDEN);
+        }
 
         $productGroup->delete();
 

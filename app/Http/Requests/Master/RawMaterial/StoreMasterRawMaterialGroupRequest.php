@@ -5,7 +5,10 @@ namespace App\Http\Requests\Master\RawMaterial;
 use App\Models\MasterRawMaterialGroup;
 use App\Models\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\ValidationException;
 
 class StoreMasterRawMaterialGroupRequest extends FormRequest
 {
@@ -19,16 +22,22 @@ class StoreMasterRawMaterialGroupRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        // menmbahkan code group otomatis berdasarkan type yang diinput
-        // 
+        $validator = Validator::make($this->all(), [
+            'codeRawMaterialType' => 'required',
+        ]);
+
         $code = $this->input('codeRawMaterialType');
-        // 
-        // mencari id type berdasarkan code unique
-        $IdRawMaterialType = MasterRawMaterialType::where('codeRawMaterialType', $code)->first()->id;
-        // 
-        $data = MasterRawMaterialGroup::where('codeRawMaterialType', $IdRawMaterialType)
+        // cek apakah type yang diinput ada didalam tabel
+        $cekRawMaterialType = MasterRawMaterialType::where('codeRawMaterialType', $code)->firstOr(function () {
+            return null;
+        });
+        if ($cekRawMaterialType === null) {
+            $validator->errors()->add('codeRawMaterialType', 'Code raw material type not Found');
+            throw new ValidationException($validator);
+        }
+
+        $data = MasterRawMaterialGroup::where('codeRawMaterialType', $code)
             ->orderBy('codeRawMaterialGroup', 'desc')->first();
-        // 
         if ($data === null) {
             $code .= '001';
         } else {
@@ -39,7 +48,7 @@ class StoreMasterRawMaterialGroupRequest extends FormRequest
         $this->merge([
             'codeRawMaterialGroup' => $code,
             'nameRawMaterialGroup' => strtoupper($this->input('nameRawMaterialGroup')),
-            'codeRawMaterialType' => $IdRawMaterialType,
+            'codeRawMaterialType' => strtoupper($this->input('codeRawMaterialType')),
         ]);
     }
 
@@ -51,7 +60,7 @@ class StoreMasterRawMaterialGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codeRawMaterialGroup' => 'required',
+            'codeRawMaterialGroup' => ['required', Rule::unique('master_raw_material_groups')->whereNull('deleted_at')],
             'nameRawMaterialGroup' => 'required|min:3|max:50',
             'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
             'codeRawMaterialType' => 'required'

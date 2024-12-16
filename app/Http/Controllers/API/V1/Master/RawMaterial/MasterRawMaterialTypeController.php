@@ -63,6 +63,19 @@ class MasterRawMaterialTypeController extends Controller
         $data['updated_by'] = Auth::id();
 
         try {
+            $codeRawMaterialType = MasterRawMaterialType::withTrashed()->where('codeRawMaterialType', $request->codeRawMaterialType)->first();
+
+            if ($codeRawMaterialType) {
+                $codeRawMaterialType->restore();
+                $codeRawMaterialType->update($request->validated());
+
+                return response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'Data restored to dbd'
+                ], Response::HTTP_OK);
+            }
+            // akhir penerapan soft delete
+
             MasterRawMaterialType::create($data);
 
             return response()->json([
@@ -137,7 +150,7 @@ class MasterRawMaterialTypeController extends Controller
         $rawMaterialType = MasterRawMaterialType::find($id);
         $origin = clone $rawMaterialType;
 
-        $exists = MasterRawMaterialGroup::where('codeRawMaterialType', $id)->exists();
+        $exists = MasterRawMaterialGroup::where('codeRawMaterialType', $rawMaterialType['codeRawMaterialType'])->exists();
         // dd($exists);
         if ($exists) {
             return response()->json([

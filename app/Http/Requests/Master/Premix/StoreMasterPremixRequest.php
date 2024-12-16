@@ -6,6 +6,7 @@ use App\Models\MasterPremix;
 use App\Models\MasterPremixGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class StoreMasterPremixRequest extends FormRequest
@@ -25,9 +26,11 @@ class StoreMasterPremixRequest extends FormRequest
             'codePremix' => 'required|max:8'
         ]);
 
-        $IdPremixGroup = MasterPremixGroup::where('codePremixGroup', $this->codePremixGroup)->first()->id;
+        $cekPremixGroup = MasterPremixGroup::where('codePremixGroup', $this->codePremixGroup)->firstOr(function () {
+            return null;
+        });
         // 
-        if ($IdPremixGroup) {
+        if ($cekPremixGroup) {
             $lenCodeGroup = strlen($this->codePremixGroup);
             if (strtoupper(substr($this->codePremix, 0, $lenCodeGroup)) !== $this->codePremixGroup) {
                 $validator->errors()->add('codePremix', 'The first ' . $lenCodeGroup . ' digits of the product code must be identical to the group code.');
@@ -39,15 +42,8 @@ class StoreMasterPremixRequest extends FormRequest
             throw new ValidationException($validator);
         }
         // 
-        $exists = MasterPremix::where('codePremix', $this->codePremix)->exists();
 
-        if ($exists) {
-            $validator->errors()->add('codePremix', 'Premix already exists');
-
-            throw new ValidationException($validator);
-        }
-
-
+        // dd($this->codePremix);
         $this->merge([
             'codePremix' => strtoupper($this->input('codePremix')),
             'namePremix' => strtoupper($this->input('namePremix')),
@@ -62,7 +58,7 @@ class StoreMasterPremixRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codePremix' => 'required|unique|max:8',
+            'codePremix' => ['required',  'max:8', Rule::unique('master_premixes')->whereNull('deleted_at')],
             'namePremix' => 'required|min:3',
             'unitOfMeasurement' => 'in:BKS,GR',
             'status' => 'in:Active,Non-Active',

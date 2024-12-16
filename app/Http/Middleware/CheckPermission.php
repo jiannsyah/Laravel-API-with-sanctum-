@@ -18,11 +18,7 @@ class CheckPermission
     {
         $token = $request->bearerToken();
         $pass = Auth::guard('sanctum')->check();
-        // $user = Auth::user();
 
-        // if($user){
-
-        // }else
         if (!$token || !$pass) {
             return response()->json([
                 'message' => 'Token not exists or wrong, please login or check first'

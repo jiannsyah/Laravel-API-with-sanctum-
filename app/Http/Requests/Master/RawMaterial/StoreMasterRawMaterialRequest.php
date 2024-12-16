@@ -5,6 +5,8 @@ namespace App\Http\Requests\Master\RawMaterial;
 use App\Models\MasterRawMaterial;
 use App\Models\MasterRawMaterialGroup;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class StoreMasterRawMaterialRequest extends FormRequest
 {
@@ -24,11 +26,22 @@ class StoreMasterRawMaterialRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $validator = Validator::make($this->all(), [
+            'codeRawMaterialGroup' => 'required',
+        ]);
+
         $code = $this->input('codeRawMaterialGroup');
-        $IdRawMaterialGroup = MasterRawMaterialGroup::where('codeRawMaterialGroup', $code)->first()->id;
-        $IdRawMaterialType = MasterRawMaterialGroup::where('codeRawMaterialGroup', $code)->first()->codeRawMaterialType;
-        // 
-        $data = MasterRawMaterial::where('codeRawMaterialGroup', $IdRawMaterialGroup)
+        // cek apakah group yang diinput ada didalam tabel
+        $cekRawMaterialGroup = MasterRawMaterialGroup::where('codeRawMaterialGroup', $code)->firstOr(function () {
+            return null;
+        });
+        if ($cekRawMaterialGroup === null) {
+            $validator->errors()->add('codeRawMaterialGroup', 'Code raw material group not Found');
+            throw new ValidationException($validator);
+        }
+
+        //otomatis penambahan kode 
+        $data = MasterRawMaterial::where('codeRawMaterialGroup', $code)
             ->orderBy('codeRawMaterial', 'desc')->first();
         // 
         if ($data === null) {
@@ -37,13 +50,13 @@ class StoreMasterRawMaterialRequest extends FormRequest
             $latest_code = substr($data->codeRawMaterial, -3);
             $code .= substr(strval((int)$latest_code + 1001), 1, 3);
         }
-        // dd($code);
+        $codeRawMaterialType = substr($code, 0, 2);
 
         $this->merge([
             'codeRawMaterial' => $code,
             'nameRawMaterial' => strtoupper($this->input('nameRawMaterial')),
-            'codeRawMaterialGroup' => $IdRawMaterialGroup,
-            'codeRawMaterialType' => $IdRawMaterialType
+            'codeRawMaterialGroup' => strtoupper($this->input('codeRawMaterialGroup')),
+            'codeRawMaterialType' => strtoupper($codeRawMaterialType)
         ]);
     }
 
@@ -56,7 +69,6 @@ class StoreMasterRawMaterialRequest extends FormRequest
             'unitOfMeasurement' => 'required|in:KG,PCS,LTR',
             'status' => 'required|in:Active,Non-Active',
             'costPrice' => 'required|numeric|min:0',
-            // 
             'codeRawMaterialGroup' => 'required',
             'codeRawMaterialType' => 'required'
         ];

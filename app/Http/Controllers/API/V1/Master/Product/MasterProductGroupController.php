@@ -27,7 +27,7 @@ class MasterProductGroupController extends Controller
             $query->where("nameProductGroup", "like", "%" . request("nameProductGroup") . "%");
         }
 
-        $productGroups = $query->paginate(2);
+        $productGroups = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
@@ -59,6 +59,18 @@ class MasterProductGroupController extends Controller
         $data['updated_by'] = Auth::id();
 
         try {
+            $productGroup = MasterProductGroup::withTrashed()->where('codeProductGroup', $request->codeProductGroup)->first();
+
+            if ($productGroup) {
+                $productGroup->restore();
+                $productGroup->update($request->validated());
+
+                return response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'Data restored to dbd'
+                ], Response::HTTP_OK);
+            }
+            // akhir penerapan soft delete
             MasterProductGroup::create($data);
 
             return response()->json([
@@ -129,13 +141,13 @@ class MasterProductGroupController extends Controller
     public function destroy($id)
     {
         $productGroup = MasterProductGroup::find($id);
-        $origin = clone $productGroup;
+        $origin = $productGroup;
 
-        $exists = MasterProduct::where('codeProductGroup', $id)->exists();
+        $exists = MasterProduct::where('codeProductGroup', $productGroup['codeProductGroup'])->exists();
         // dd($exists);
         if ($exists) {
             return response()->json([
-                'message' => "Code Product Group type cannot be deleted because it is linked to a product",
+                'message' => "Code Product Group cannot be deleted because it is linked to a product",
                 'status' => Response::HTTP_FORBIDDEN
             ], Response::HTTP_FORBIDDEN);
         }

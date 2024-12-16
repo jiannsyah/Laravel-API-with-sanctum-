@@ -13,7 +13,12 @@ class UpdateMasterRawMaterialGroupRequest extends FormRequest
     {
         return true;
     }
-
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'nameRawMaterialGroup' => strtoupper($this->input('nameRawMaterialGroup')),
+        ]);
+    }
     /**
      * Get the validation rules that apply to the request.
      *
