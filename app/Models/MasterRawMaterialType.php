@@ -15,6 +15,8 @@ class MasterRawMaterialType extends Model
 
     use SoftDeletes; // Mengaktifkan soft deletes
 
+    protected $table = 'master_raw_material_types';
+
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];

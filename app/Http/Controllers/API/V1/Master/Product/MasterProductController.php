@@ -58,6 +58,18 @@ class MasterProductController extends Controller
         $data['updated_by'] = Auth::id();
         // dd($data);
         try {
+            $product = MasterProduct::withTrashed()->where('codeProduct', $request->codeProduct)->first();
+
+            if ($product) {
+                $product->restore();
+                $product->update($request->validated());
+
+                return response()->json([
+                    'status' => Response::HTTP_OK,
+                    'message' => 'Data restored to dbd'
+                ], Response::HTTP_OK);
+            }
+            // akhir penerapan soft delete
             MasterProduct::create($data);
 
             return response()->json([
@@ -130,7 +142,7 @@ class MasterProductController extends Controller
         $product = MasterProduct::find($id);
         $origin = clone $product;
 
-        $exists = MasterProduct::where('codeProduct', $id)->exists();
+        // $exists = MasterProduct::where('codeProduct', $id)->exists();
         // dd($exists);
         // if ($exists) {
         //     return response()->json([

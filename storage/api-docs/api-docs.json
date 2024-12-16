@@ -80,6 +80,18 @@
                 ],
                 "summary": "Get list Premixes",
                 "operationId": "666a88c7a841ab7cd43985802b119d1f",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -139,7 +151,7 @@
                 },
                 "security": [
                     {
-                        "bearer": []
+                        "bearerAuth": []
                     }
                 ]
             },
@@ -437,6 +449,81 @@
                     }
                 ]
             }
+        },
+        "/api/V1/premix-group": {
+            "get": {
+                "tags": [
+                    "PremixGroup"
+                ],
+                "summary": "Get list Premix Groups",
+                "operationId": "06af87238dca3cfd5874d5681a29ad1a",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "example": "uuid"
+                                            },
+                                            "codePremixGroup": {
+                                                "type": "string",
+                                                "example": "code"
+                                            },
+                                            "namePremixGroup": {
+                                                "type": "string",
+                                                "example": "namePremix"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "status"
+                                            },
+                                            "created_by": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "name"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "email"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -447,6 +534,10 @@
         {
             "name": "Premix",
             "description": "Premix"
+        },
+        {
+            "name": "PremixGroup",
+            "description": "PremixGroup"
         }
     ],
     "components": {

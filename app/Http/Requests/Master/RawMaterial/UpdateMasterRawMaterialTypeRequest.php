@@ -15,6 +15,13 @@ class UpdateMasterRawMaterialTypeRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'nameRawMaterialType' => strtoupper($this->input('nameRawMaterialType')),
+        ]);
+    }
+
     // protected function prepareForValidation(): void
     // {
     //     $id = $this->route('raw_material_type'); // Ambil ID dari parameter route

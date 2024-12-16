@@ -6,6 +6,7 @@ use App\Models\MasterProductGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class StoreMasterProductGroupRequest extends FormRequest
@@ -20,18 +21,6 @@ class StoreMasterProductGroupRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $validator = Validator::make($this->all(), [
-            'codeProductGroup' => 'required|max:3'
-        ]);
-
-        $exists = MasterProductGroup::where('codeProductGroup', $this->codeProductGroup)->exists();
-
-        if ($exists) {
-            $validator->errors()->add('codeProductGroup', 'Product Group already exists');
-
-            throw new ValidationException($validator);
-        }
-
         $this->merge([
             'codeProductGroup' => strtoupper($this->input('codeProductGroup')),
             'nameProductGroup' => strtoupper($this->input('nameProductGroup')),
@@ -45,7 +34,7 @@ class StoreMasterProductGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codeProductGroup' => 'required|max:3',
+            'codeProductGroup' => ['required', 'max:3', Rule::unique('master_product_groups')->whereNull('deleted_at')],
             'nameProductGroup' => 'required|min:3|max:50',
         ];
     }

@@ -6,6 +6,7 @@ use App\Models\MasterProduct;
 use App\Models\MasterProductGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class StoreMasterProductRequest extends FormRequest
@@ -23,10 +24,12 @@ class StoreMasterProductRequest extends FormRequest
             'codeProductGroup' => 'required',
             'codeProduct' => 'required|max:8'
         ]);
-
-        $IdProductGroup = MasterProductGroup::where('codeProductGroup', $this->codeProductGroup)->first()->id;
         // 
-        if ($IdProductGroup) {
+        $cekProductGroup = MasterProductGroup::where('codeProductGroup', $this->codeProductGroup)->firstOr(function () {
+            return null;
+        });
+        // 
+        if ($cekProductGroup) {
             $lenCodeGroup = strlen($this->codeProductGroup);
             if (strtoupper(substr($this->codeProduct, 0, $lenCodeGroup)) !== $this->codeProductGroup) {
                 $validator->errors()->add('codeProduct', 'The first ' . $lenCodeGroup . ' digits of the product code must be identical to the group code.');
@@ -38,19 +41,11 @@ class StoreMasterProductRequest extends FormRequest
             throw new ValidationException($validator);
         }
         // 
-        $exists = MasterProduct::where('codeProduct', $this->codeProduct)->exists();
-
-        if ($exists) {
-            $validator->errors()->add('codeProduct', 'Product already exists');
-
-            throw new ValidationException($validator);
-        }
-
 
         $this->merge([
             'codeProduct' => strtoupper($this->input('codeProduct')),
             'nameProduct' => strtoupper($this->input('nameProduct')),
-            'codeProductGroup' => $IdProductGroup
+            'codeProductGroup' => strtoupper($this->input('codeProductGroup')),
         ]);
     }
     /**
@@ -61,7 +56,7 @@ class StoreMasterProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codeProduct' => 'required|max:8',
+            'codeProduct' => ['required', Rule::unique('master_products')->whereNull('deleted_at')],
             'nameProduct' => 'required',
             'smallUnit' => 'required|in:BTR,PCS',
             'mediumUnit' => 'required|in:PACK',

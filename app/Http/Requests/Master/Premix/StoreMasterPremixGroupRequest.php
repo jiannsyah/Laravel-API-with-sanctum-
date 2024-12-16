@@ -6,6 +6,7 @@ use App\Models\MasterPremixGroup;
 use App\Models\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class StoreMasterPremixGroupRequest extends FormRequest
@@ -23,6 +24,7 @@ class StoreMasterPremixGroupRequest extends FormRequest
         $validator = Validator::make($this->all(), [
             'codePremixGroup' => 'required|regex:/^[1-9][0-9]*$/|max:5'
         ]);
+        // 
         //cek 2 digit awl tidak boleh sama dengan master raw material type
         $existType = MasterRawMaterialType::where('codeRawMaterialType', substr($this->codePremixGroup, 0, 2))->exists();
         if ($existType) {
@@ -30,12 +32,6 @@ class StoreMasterPremixGroupRequest extends FormRequest
             throw new ValidationException($validator);
         }
         // 
-        $exists = MasterPremixGroup::where('codePremixGroup', $this->codePremixGroup)->exists();
-        if ($exists) {
-            $validator->errors()->add('codePremixGroup', 'Premix Group already exists');
-
-            throw new ValidationException($validator);
-        }
         $this->merge([
             'codePremixGroup' => strtoupper($this->input('codePremixGroup')),
             'namePremixGroup' => strtoupper($this->input('namePremixGroup')),
@@ -50,7 +46,7 @@ class StoreMasterPremixGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codePremixGroup' => 'required|regex:/^[1-9][0-9]*$/|max:5',
+            'codePremixGroup' => ['required', 'regex:/^[1-9][0-9]*$/', 'max:5', Rule::unique('master_premix_groups')->whereNull('deleted_at')],
             'namePremixGroup' => 'required|min:5|max:50',
         ];
     }

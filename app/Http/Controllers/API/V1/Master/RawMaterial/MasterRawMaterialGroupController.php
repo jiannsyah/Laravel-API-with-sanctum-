@@ -132,9 +132,8 @@ class MasterRawMaterialGroupController extends Controller
     {
         $rawMaterialGroup = MasterRawMaterialGroup::find($id);
         $origin = clone $rawMaterialGroup;
-
-        $exists = MasterRawMaterial::where('codeRawMaterialGroup', $id)->exists();
-        // dd($exists);
+        $exists = MasterRawMaterial::where('codeRawMaterialGroup', $rawMaterialGroup['codeRawMaterialGroup'])->exists();
+        // 
         if ($exists) {
             return response()->json([
                 'message' => "Raw material group cannot be deleted because it is linked to a raw material",
