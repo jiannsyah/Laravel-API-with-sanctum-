@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MasterPremixFormulaSeeder::class);
         // 
         $this->call(MasterCustomerSeeder::class);
+        $this->call(MasterSupplierSeeder::class);
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

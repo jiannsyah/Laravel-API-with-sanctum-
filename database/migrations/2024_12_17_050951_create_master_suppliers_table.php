@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_customers', function (Blueprint $table) {
+        Schema::create('master_suppliers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('codeCustomer', 5)->unique();
-            $table->string('nameCustomer', 40);
+            $table->string('codeSupplier', 5)->unique();
+            $table->string('nameSupplier', 40);
             $table->string('abbreviation', 20);
             $table->string('addressLine1', 50)->nullable();
             $table->string('addressLine2', 50)->nullable();
@@ -22,11 +22,7 @@ return new class extends Migration
             $table->string('phone', 15)->nullable();
             $table->string('email')->nullable();
             $table->string('attention')->nullable();
-            $table->enum('priceType', ['WholesalePrice', 'NonWholesalePrice', 'Retail'])->default('WholesalePrice');
             $table->integer('top')->default(0);
-            $table->string('npwp', 16)->nullable();
-            $table->string('nik', 16)->nullable();
-            $table->enum('status', ['Active', 'InActive'])->default('Active');
             // 
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
@@ -40,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_customers');
+        Schema::dropIfExists('master_suppliers');
     }
 };
