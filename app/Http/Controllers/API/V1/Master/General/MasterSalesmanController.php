@@ -3,40 +3,40 @@
 namespace App\Http\Controllers\API\V1\Master\General;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\General\StoreMasterSupplierRequest;
-use App\Http\Requests\Master\General\UpdateMasterSupplierRequest;
-use App\Http\Resources\Master\General\MasterSupplierCollection;
-use App\Http\Resources\Master\General\MasterSupplierResource;
-use App\Models\MasterSupplier;
+use App\Http\Requests\Master\General\StoreMasterSalesmanRequest;
+use App\Http\Requests\Master\General\UpdateMasterSalesmanRequest;
+use App\Http\Resources\Master\General\MasterSalesmanCollection;
+use App\Http\Resources\Master\General\MasterSalesmanResource;
+use App\Models\MasterSalesman;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class MasterSupplierController extends Controller
+class MasterSalesmanController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = MasterSupplier::query()->orderBy('codeSupplier', 'asc');
+        $query = MasterSalesman::query()->orderBy('codeSalesman', 'asc');
 
-        if (request('nameSupplier')) {
-            $query->where("nameSupplier", "like", "%" . request("nameSupplier") . "%");
+        if (request('nameSalesman')) {
+            $query->where("nameSalesman", "like", "%" . request("nameSalesman") . "%");
         }
 
-        $suppliers = $query->paginate(10);
+        $salesman = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
-        if ($suppliers->isEmpty()) {
+        if ($salesman->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Supplier  Empty'
+                'message' => 'Salesman  Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return new MasterSupplierCollection($suppliers);
+            return new MasterSalesmanCollection($salesman);
         }
     }
 
@@ -51,18 +51,18 @@ class MasterSupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMasterSupplierRequest $request)
+    public function store(StoreMasterSalesmanRequest $request)
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
         try {
-            $codeSupplier = MasterSupplier::withTrashed()->where('codeSupplier', $request->codeSupplier)->first();
+            $codeSalesman = MasterSalesman::withTrashed()->where('codeSalesman', $request->codeSalesman)->first();
 
-            if ($codeSupplier) {
-                $codeSupplier->restore();
-                $codeSupplier->update($request->validated());
+            if ($codeSalesman) {
+                $codeSalesman->restore();
+                $codeSalesman->update($request->validated());
 
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -71,7 +71,7 @@ class MasterSupplierController extends Controller
             }
             // akhir penerapan soft delete
 
-            MasterSupplier::create($data);
+            MasterSalesman::create($data);
 
             return response()->json([
                 'status' => Response::HTTP_OK,
@@ -91,16 +91,16 @@ class MasterSupplierController extends Controller
      */
     public function show($id)
     {
-        $supplier = MasterSupplier::find($id);
-        // dd($supplier);
-        if ($supplier === null) {
+        $salesman = MasterSalesman::find($id);
+        // dd($salesman);
+        if ($salesman === null) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Supplier Empty'
+                'message' => 'Salesman Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
             return response()->json([
-                'data' => new MasterSupplierResource($supplier),
+                'data' => new MasterSalesmanResource($salesman),
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         }
@@ -109,7 +109,7 @@ class MasterSupplierController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MasterSupplier $masterSupplier)
+    public function edit(MasterSalesman $masterSalesman)
     {
         //
     }
@@ -117,19 +117,19 @@ class MasterSupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterSupplierRequest $request, $id)
+    public function update(UpdateMasterSalesmanRequest $request, $id)
     {
-        $masterSupplier = MasterSupplier::findOrFail($id);
-        $masterSupplier['updated_by'] = Auth::id();
-        $origin = clone $masterSupplier;
-        // dd($masterSupplier);
+        $masterSalesman = MasterSalesman::findOrFail($id);
+        $masterSalesman['updated_by'] = Auth::id();
+        $origin = clone $masterSalesman;
+        // dd($masterSalesman);
         // 
-        $masterSupplier->update($request->validated());
+        $masterSalesman->update($request->validated());
 
         try {
             return response()->json([
-                'data' => new MasterSupplierResource($masterSupplier),
-                'message' => "Master supplier with name '$origin->nameSupplier' has been changed  '$masterSupplier->nameSupplier'",
+                'data' => new MasterSalesmanResource($masterSalesman),
+                'message' => "Master salesman with name '$origin->nameSalesman' has been changed  '$masterSalesman->nameSalesman'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -146,23 +146,23 @@ class MasterSupplierController extends Controller
      */
     public function destroy($id)
     {
-        $supplier = MasterSupplier::find($id);
-        $origin = clone $supplier;
+        $salesman = MasterSalesman::find($id);
+        $origin = clone $salesman;
 
-        // $exists = MasterSupplier::where('codePremix', $id)->exists();
+        // $exists = MasterSalesman::where('codePremix', $id)->exists();
         // dd($exists);
         // if ($exists) {
         //     return response()->json([
-        //         'message' => "Code Premix  type cannot be deleted because it is linked to a supplier",
+        //         'message' => "Code Premix  type cannot be deleted because it is linked to a salesman",
         //         'status' => Response::HTTP_FORBIDDEN
         //     ], Response::HTTP_FORBIDDEN);
         // }
 
-        $supplier->delete();
+        $salesman->delete();
 
         try {
             return response()->json([
-                'message' => "Supplier  with name '$origin->nameSupplier' has been deleted",
+                'message' => "Salesman  with name '$origin->nameSalesman' has been deleted",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {

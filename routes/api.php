@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\Master\General\MasterCustomerController;
+use App\Http\Controllers\API\V1\Master\General\MasterSalesmanController;
 use App\Http\Controllers\API\V1\Master\General\MasterSupplierController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixFormulaController;
@@ -46,6 +47,7 @@ Route::prefix('V1')->group(function () {
         // 
         Route::resource('customer', MasterCustomerController::class);
         Route::resource('supplier', MasterSupplierController::class);
+        Route::resource('salesman', MasterSalesmanController::class);
         // 
         Route::middleware(['role:admin'])->group(function () {
             Route::resource('user', UserController::class);
