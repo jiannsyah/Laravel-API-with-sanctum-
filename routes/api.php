@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\V1\ArticleController;
 use App\Http\Controllers\API\V1\AuthController;
+use App\Http\Controllers\API\V1\Master\General\MasterCustomerController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixFormulaController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixGroupController;
@@ -11,8 +11,9 @@ use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;
 use App\Http\Controllers\API\V1\User\UserController;
-use App\Http\Middleware\CheckPermission;
 use Illuminate\Support\Facades\Route;
+
+
 // use L5Swagger\L5SwaggerServiceProvider;
 
 // Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
@@ -41,6 +42,8 @@ Route::prefix('V1')->group(function () {
         Route::resource('premix-group', MasterPremixGroupController::class);
         Route::resource('premix-formula', MasterPremixFormulaController::class);
         Route::resource('premix', MasterPremixController::class);
+        // 
+        Route::resource('customer', MasterCustomerController::class);
         // 
         Route::middleware(['role:admin'])->group(function () {
             Route::resource('user', UserController::class);

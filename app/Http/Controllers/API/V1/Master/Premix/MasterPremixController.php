@@ -236,7 +236,8 @@ class MasterPremixController extends Controller
      *         description="Not Found"
      *     )
      * )
-     */    public function show($id)
+     */
+    public function show($id)
     {
         $masterPremix = MasterPremix::with('group')->findOrFail($id);
         // dd($masterPremix);

@@ -1,3 +1,29 @@
+command yang sering digunakan dalam membangun laravel
+1.  membuat model
+    php artisan make:model [nama model] -[factory][migration]
+    php artisan make:model MasterCustomer -fm
+    a-  edit modelnya
+    b-  edit migration
+
+2. membuat seeder (jika perlu)    
+    *   php artisan make:seeder MasterCustomerSeeder
+    //edit  seedernya, jika seedernya sudah diisi
+    *   php artisan db:seed --class=MasterCustomerTypeSeeder
+
+3. membuat controller
+    *   php artisan make:controller API/V1/Master/General/MasterCustomerController --model=MasterCustomer --requests --resource
+
+4. membuat resource & collection 
+    *   php artisan make:resource Master/General/MasterCustomerCollection
+    *   php artisan make:resource Master/General/MasterCustomerResource
+
+5. cek error: tail -f storage/logs/laravel.log
+
+6. php artisan route:list --name=store
+    
+
+
+
 menambahkan role & permission dengan spatie
 
 1.  melakukan php artisan migrate:refresh 
@@ -51,4 +77,6 @@ install swagger
             ]);
         })
 4. ketikan anotasi swagger nya
-5. php artisan l5-swagger:generate        
+5. php artisan l5-swagger:generate      
+
+
