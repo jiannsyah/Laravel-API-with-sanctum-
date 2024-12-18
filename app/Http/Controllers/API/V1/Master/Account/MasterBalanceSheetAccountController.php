@@ -1,42 +1,42 @@
 <?php
 
-namespace App\Http\Controllers\API\V1\Master\General;
+namespace App\Http\Controllers\API\V1\Master\Account;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\General\StoreMasterCustomerRequest;
-use App\Http\Requests\Master\General\UpdateMasterCustomerRequest;
-use App\Http\Resources\Master\General\MasterCustomerCollection;
-use App\Http\Resources\Master\General\MasterCustomerResource;
-use App\Models\Master\MasterCustomer;
+use App\Http\Requests\Master\Account\StoreMasterBalanceSheetAccountRequest;
+use App\Http\Requests\Master\Account\UpdateMasterBalanceSheetAccountRequest;
+use App\Http\Resources\Master\Account\MasterBalanceSheetAccountCollection;
+use App\Http\Resources\Master\Account\MasterBalanceSheetAccountResource;
+use App\Models\Master\MasterBalanceSheetAccount;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class MasterCustomerController extends Controller
+class MasterBalanceSheetAccountController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = MasterCustomer::query()->orderBy('codeCustomer', 'asc');
+        $query = MasterBalanceSheetAccount::query()->orderBy('numberAccount', 'asc');
 
-        if (request('nameCustomer')) {
-            $query->where("nameCustomer", "like", "%" . request("nameCustomer") . "%");
+        if (request('nameAccountBalance')) {
+            $query->where("nameAccountBalance", "like", "%" . request("nameAccountBalance") . "%");
         }
 
-        $customers = $query->paginate(10);
+        $BalanceSheetAccount = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
-        if ($customers->isEmpty()) {
+        if ($BalanceSheetAccount->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Customer  Empty'
+                'message' => 'Balance Sheet Account Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return new MasterCustomerCollection($customers);
+            return new MasterBalanceSheetAccountCollection($BalanceSheetAccount);
         }
     }
 
@@ -51,18 +51,20 @@ class MasterCustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMasterCustomerRequest $request)
+    public function store(StoreMasterBalanceSheetAccountRequest $request)
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
         try {
-            $codeCustomer = MasterCustomer::withTrashed()->where('codeCustomer', $request->codeCustomer)->first();
+            // dd('masuk');
+            $BalanceSheetAccount = MasterBalanceSheetAccount::withTrashed()->where('numberAccount', $request->numberAccount)->first();
+            // dd($BalanceSheetAccount);
 
-            if ($codeCustomer) {
-                $codeCustomer->restore();
-                $codeCustomer->update($request->validated());
+            if ($BalanceSheetAccount) {
+                $BalanceSheetAccount->restore();
+                $BalanceSheetAccount->update($request->validated());
 
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -71,7 +73,7 @@ class MasterCustomerController extends Controller
             }
             // akhir penerapan soft delete
 
-            MasterCustomer::create($data);
+            MasterBalanceSheetAccount::create($data);
 
             return response()->json([
                 'status' => Response::HTTP_OK,
@@ -91,16 +93,16 @@ class MasterCustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = MasterCustomer::find($id);
-        // dd($customer);
-        if ($customer === null) {
+        $BalanceSheetAccount = MasterBalanceSheetAccount::find($id);
+        // dd($BalanceSheetAccount);
+        if ($BalanceSheetAccount === null) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Customer Empty'
+                'message' => 'Balance Sheet Account Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
             return response()->json([
-                'data' => new MasterCustomerResource($customer),
+                'data' => new MasterBalanceSheetAccountResource($BalanceSheetAccount),
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         }
@@ -109,7 +111,7 @@ class MasterCustomerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MasterCustomer $masterCustomer)
+    public function edit(MasterBalanceSheetAccount $masterBalanceSheetAccount)
     {
         //
     }
@@ -117,19 +119,19 @@ class MasterCustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterCustomerRequest $request, $id)
+    public function update(UpdateMasterBalanceSheetAccountRequest $request, $id)
     {
-        $masterCustomer = MasterCustomer::findOrFail($id);
-        $masterCustomer['updated_by'] = Auth::id();
-        $origin = clone $masterCustomer;
-        // dd($masterCustomer);
+        $BalanceSheetAccount = MasterBalanceSheetAccount::findOrFail($id);
+        $BalanceSheetAccount['updated_by'] = Auth::id();
+        $origin = clone $BalanceSheetAccount;
+        // dd($BalanceSheetAccount);
         // 
-        $masterCustomer->update($request->validated());
+        $BalanceSheetAccount->update($request->validated());
 
         try {
             return response()->json([
-                'data' => new MasterCustomerResource($masterCustomer),
-                'message' => "Master customer with name '$origin->nameCustomer' has been changed  '$masterCustomer->nameCustomer'",
+                'data' => new MasterBalanceSheetAccountResource($BalanceSheetAccount),
+                'message' => "Master customer with name '$origin->nameAccountBalance' has been changed  '$BalanceSheetAccount->nameAccountBalance'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -146,23 +148,23 @@ class MasterCustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = MasterCustomer::find($id);
-        $origin = clone $customer;
+        $BalanceSheetAccount = MasterBalanceSheetAccount::find($id);
+        $origin = clone $BalanceSheetAccount;
 
-        // $exists = MasterCustomer::where('codePremix', $id)->exists();
+        // $exists = MasterBalanceSheetAccount::where('codePremix', $id)->exists();
         // dd($exists);
         // if ($exists) {
         //     return response()->json([
-        //         'message' => "Code Premix  type cannot be deleted because it is linked to a customer",
+        //         'message' => "Code Premix  type cannot be deleted because it is linked to a BalanceSheetAccount",
         //         'status' => Response::HTTP_FORBIDDEN
         //     ], Response::HTTP_FORBIDDEN);
         // }
 
-        $customer->delete();
+        $BalanceSheetAccount->delete();
 
         try {
             return response()->json([
-                'message' => "Customer  with name '$origin->nameCustomer' has been deleted",
+                'message' => "Account Balance  with name '$origin->nameAccountBalance' has been deleted",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {

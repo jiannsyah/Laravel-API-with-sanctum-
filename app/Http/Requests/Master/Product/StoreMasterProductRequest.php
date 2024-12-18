@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Master\Product;
 
-use App\Models\MasterProduct;
-use App\Models\MasterProductGroup;
+use App\Models\Master\MasterProduct;
+use App\Models\Master\MasterProductGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

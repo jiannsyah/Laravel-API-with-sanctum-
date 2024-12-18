@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Master\RawMaterial;
 
-use App\Models\MasterRawMaterialType;
+use App\Models\Master\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMasterRawMaterialTypeRequest extends FormRequest

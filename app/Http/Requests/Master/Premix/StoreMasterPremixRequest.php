@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Master\Premix;
 
-use App\Models\MasterPremix;
-use App\Models\MasterPremixGroup;
+use App\Models\Master\MasterPremix;
+use App\Models\Master\MasterPremixGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

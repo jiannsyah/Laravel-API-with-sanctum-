@@ -1,26 +1,25 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Master;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterProductGroup extends Model
+class MasterSupplier extends Model
 {
+    /** @use HasFactory<\Database\Factories\MasterSupplierFactory> */
     use HasFactory;
+
     use HasUuids;
-    use SoftDeletes; // Mengaktifkan soft deletes
 
-    protected $fillable = ['codeProductGroup', 'nameProductGroup', 'created_by', 'updated_by'];
-    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
+    use SoftDeletes;
 
+    protected $dates = ['deleted_at'];
 
-    public function products()
-    {
-        return $this->hasMany(MasterProduct::class, 'codeProductGroup');
-    }
+    protected $fillable = ['codeSupplier', 'nameSupplier', 'abbreviation', 'addressLine1', 'addressLine2', 'ppn', 'phone', 'email', 'attention', 'top', 'created_by', 'updated_by'];
 
     public function createdBy()
     {

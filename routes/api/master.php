@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\Master\Account\MasterBalanceSheetAccountController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\Master\General\MasterCustomerController;
 use App\Http\Controllers\API\V1\Master\General\MasterSalesmanController;
@@ -28,4 +29,6 @@ Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
     Route::resource('customer', MasterCustomerController::class);
     Route::resource('supplier', MasterSupplierController::class);
     Route::resource('salesman', MasterSalesmanController::class);
+
+    Route::resource('balance-sheet-account', MasterBalanceSheetAccountController::class);
 });

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Master\RawMaterial;
 
-use App\Models\MasterRawMaterial;
-use App\Models\MasterRawMaterialGroup;
+use App\Models\Master\MasterRawMaterial;
+use App\Models\Master\MasterRawMaterialGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;

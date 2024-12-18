@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Master\General;
 
-use App\Models\MasterSupplier;
+use App\Models\Master\MasterSupplier;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
