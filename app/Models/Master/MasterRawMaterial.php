@@ -7,22 +7,25 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterRawMaterial extends Model
+class MasterRawMaterial extends Model implements Auditable
 {
     use HasFactory;
 
     use HasUuids;
+
+    use \OwenIt\Auditing\Auditable;
+
+    use SoftDeletes; // Mengaktifkan soft deletes
+
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     protected $fillable = ['codeRawMaterial', 'nameRawMaterial', 'brand', 'unitOfMeasurement', 'status', 'costPrice', 'codeRawMaterialType', 'codeRawMaterialGroup', 'created_by', 'updated_by'];
 
     protected $attributes = [
         'brand' => 'LOCAL'
     ];
-
-    use SoftDeletes; // Mengaktifkan soft deletes
-
-    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     public function type()
     {

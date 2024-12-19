@@ -7,17 +7,21 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterPremix extends Model
+class MasterPremix extends Model implements Auditable
 {
     use HasFactory;
+
     use HasUuids;
 
-    protected $fillable = ['codePremix', 'namePremix', 'unitOfMeasurement', 'status', 'codePremixGroup', 'created_by', 'updated_by'];
+    use \OwenIt\Auditing\Auditable;
 
     use SoftDeletes; // Mengaktifkan soft deletes
 
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
+
+    protected $fillable = ['codePremix', 'namePremix', 'unitOfMeasurement', 'status', 'codePremixGroup', 'created_by', 'updated_by'];
 
     public function group()
     {

@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterSupplier extends Model
+class MasterSupplier extends Model implements Auditable
 {
     /** @use HasFactory<\Database\Factories\MasterSupplierFactory> */
     use HasFactory;
@@ -16,6 +17,8 @@ class MasterSupplier extends Model
     use HasUuids;
 
     use SoftDeletes;
+
+    use \OwenIt\Auditing\Auditable;
 
     protected $dates = ['deleted_at'];
 

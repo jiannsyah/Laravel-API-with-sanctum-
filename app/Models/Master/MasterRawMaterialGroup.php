@@ -7,14 +7,17 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterRawMaterialGroup extends Model
+class MasterRawMaterialGroup extends Model implements Auditable
 {
     use HasFactory;
 
     use HasUuids;
 
     use SoftDeletes; // Mengaktifkan soft deletes
+
+    use \OwenIt\Auditing\Auditable;
 
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 

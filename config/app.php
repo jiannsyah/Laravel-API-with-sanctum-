@@ -124,7 +124,7 @@ return [
     ],
 
     // 'providers' => [
-    //     Spatie\Permission\PermissionServiceProvider::class,
+    //     // Spatie\Permission\PermissionServiceProvider::class,
+    //     // OwenIt\Auditing\AuditingServiceProvider::class,
     // ]
-
 ];

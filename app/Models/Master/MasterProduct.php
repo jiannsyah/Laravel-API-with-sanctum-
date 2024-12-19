@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterProduct extends Model
+class MasterProduct extends Model implements Auditable
 {
     use HasFactory;
 
@@ -16,7 +17,10 @@ class MasterProduct extends Model
 
     use SoftDeletes; // Mengaktifkan soft deletes
 
+    use \OwenIt\Auditing\Auditable;
+
     protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
+
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
     public function group()
