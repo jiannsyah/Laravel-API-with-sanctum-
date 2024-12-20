@@ -34,7 +34,6 @@ Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
 
     Route::resource('balance-sheet-account', MasterBalanceSheetAccountController::class);
     Route::resource('general-ledger-account', MasterGeneralLedgerAccountController::class);
-    // Route::get('general-ledger-account/logs', [MasterGeneralLedgerAccountController::class, 'logs'])->name('general-ledger-account.logs');
 
     Route::resource('parameter', MasterParameterController::class);
 });

@@ -10,9 +10,11 @@ use App\Http\Resources\Master\Product\MasterProductGroupResource;
 use App\Models\Master\MasterProduct;
 use App\Models\Master\MasterProductGroup;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use OwenIt\Auditing\Models\Audit;
 
 class MasterProductGroupController extends Controller
 {
@@ -166,5 +168,40 @@ class MasterProductGroupController extends Controller
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function logs(Request $request)
+    {
+        $logs = Audit::where('auditable_type', MasterProductGroup::class)->get();
+
+        if (request('event')) {
+            if (request('event') !== 'created' && request('event') !== 'restored' && request('event') !== 'updated' && request('event') !== 'deleted') {
+                return response()->json([
+                    'status' => Response::HTTP_NOT_FOUND,
+                    'message' => 'The sent method is not correct'
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $logs = Audit::where('auditable_type', MasterProductGroup::class)->where('event', request('event'))->get();
+        }
+
+        // Format data log untuk response
+        $data = $logs->map(function ($log) {
+            return [
+                // 'id' => $log->id,
+                'event' => $log->event,
+                'old_values' => $log->old_values,
+                'new_values' => $log->new_values,
+                'user_id' => $log->user_id,
+                'user_name' => optional($log->user)->name, // Ambil nama user
+                'created_at' => $log->created_at,
+            ];
+        });
+
+        // Return dalam bentuk JSON
+        return response()->json([
+            'success' => true,
+            'logs' => $data,
+        ]);
     }
 }
