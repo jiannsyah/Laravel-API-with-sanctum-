@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\Master\General\MasterCustomerController;
 use App\Http\Controllers\API\V1\Master\General\MasterSalesmanController;
 use App\Http\Controllers\API\V1\Master\General\MasterSupplierController;
+use App\Http\Controllers\API\V1\Master\Parameter\MasterParameterController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixFormulaController;
 use App\Http\Controllers\API\V1\Master\Premix\MasterPremixGroupController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;
+use App\Models\Master\Parameter\MasterParameter;
 
 Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
     Route::resource('raw-material-type', MasterRawMaterialTypeController::class);
@@ -31,4 +33,6 @@ Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
     Route::resource('salesman', MasterSalesmanController::class);
 
     Route::resource('balance-sheet-account', MasterBalanceSheetAccountController::class);
+
+    Route::resource('parameter', MasterParameterController::class);
 });

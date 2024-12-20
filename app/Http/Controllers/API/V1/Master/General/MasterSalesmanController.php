@@ -28,6 +28,11 @@ class MasterSalesmanController extends Controller
 
         $salesman = $query->paginate(10);
 
+        // $params = app('params');
+        // $workDate = $params['workDate'];
+
+        // dd($workDate);
+
         // $customPaginate = MyServices::customPaginate($articles);
 
         if ($salesman->isEmpty()) {
