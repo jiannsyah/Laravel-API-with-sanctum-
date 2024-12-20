@@ -3,11 +3,9 @@
 namespace App\Http\Requests\Master\Account;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
-class UpdateMasterBalanceSheetAccountRequest extends FormRequest
+class UpdateMasterGeneralLedgerAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +20,8 @@ class UpdateMasterBalanceSheetAccountRequest extends FormRequest
         // dd($this->route()->originalParameters());
 
         $this->merge([
-            'nameBalanceSheetAccount' => strtoupper($this->input('nameBalanceSheetAccount')),
-            'abvBalanceSheetAccount' => strtoupper($this->input('abvBalanceSheetAccount')),
+            'nameGeneralLedgerAccount' => strtoupper($this->input('nameGeneralLedgerAccount')),
+            'abvGeneralLedgerAccount' => strtoupper($this->input('abvGeneralLedgerAccount')),
         ]);
     }
 
@@ -35,16 +33,16 @@ class UpdateMasterBalanceSheetAccountRequest extends FormRequest
     public function rules(): array
     {
         $requests = $this->route()->originalParameters();
-        $id = $requests['balance_sheet_account'];
+        $id = $requests['general_ledger_account'];
         // dd($id);
         return [
-            'nameBalanceSheetAccount' => ['required', 'max:50', Rule::unique('master_balance_sheet_accounts')->whereNull('deleted_at')->ignore($id)],
-            'abvBalanceSheetAccount' => ['required', 'max:25', Rule::unique('master_balance_sheet_accounts')->whereNull('deleted_at')->ignore($id)],
-            'characteristicAccount' => 'required|in:Header,Total,Account',
+            'nameGeneralLedgerAccount' => ['required', 'max:50', Rule::unique('master_general_ledger_accounts')->whereNull('deleted_at')->ignore($id)],
+            'abvGeneralLedgerAccount' => ['required', 'max:25', Rule::unique('master_general_ledger_accounts')->whereNull('deleted_at')->ignore($id)],
             'typeAccount' => 'required|in:AK,PS,PD,BY,LL',
             'specialAccount' => 'required|in:KS,BK,RE,PCY,GENERAL',
         ];
     }
+
     public function messages()
     {
         return [

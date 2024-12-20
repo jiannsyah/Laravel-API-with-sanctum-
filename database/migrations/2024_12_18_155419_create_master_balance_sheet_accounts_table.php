@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('master_balance_sheet_accounts', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('numberAccount', 8)->unique();
-            $table->string('nameAccountBalance', 50)->unique();
-            $table->string('abbreviation', 30)->unique();
+            $table->string('numberBalanceSheetAccount', 8)->unique();
+            $table->string('nameBalanceSheetAccount', 50)->unique();
+            $table->string('abvBalanceSheetAccount', 30)->unique();
             $table->enum('characteristicAccount', ['Header', 'Total', 'Account']);
             $table->enum('typeAccount', ['AK', 'PS', 'PD', 'BY', 'LL']);
             $table->enum('specialAccount', ['KS', 'BK', 'RE', 'PCY', 'GENERAL']);
