@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Master\Account\MasterBalanceSheetAccountController;
+use App\Http\Controllers\API\V1\Master\Account\MasterGeneralLedgerAccountController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\Master\General\MasterCustomerController;
 use App\Http\Controllers\API\V1\Master\General\MasterSalesmanController;
@@ -33,6 +34,8 @@ Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
     Route::resource('salesman', MasterSalesmanController::class);
 
     Route::resource('balance-sheet-account', MasterBalanceSheetAccountController::class);
+    Route::resource('general-ledger-account', MasterGeneralLedgerAccountController::class);
+    // Route::get('general-ledger-account/logs', [MasterGeneralLedgerAccountController::class, 'logs'])->name('general-ledger-account.logs');
 
     Route::resource('parameter', MasterParameterController::class);
 });

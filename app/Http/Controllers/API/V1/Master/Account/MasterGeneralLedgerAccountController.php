@@ -3,40 +3,41 @@
 namespace App\Http\Controllers\API\V1\Master\Account;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\Account\StoreMasterBalanceSheetAccountRequest;
-use App\Http\Requests\Master\Account\UpdateMasterBalanceSheetAccountRequest;
-use App\Http\Resources\Master\Account\MasterBalanceSheetAccountCollection;
-use App\Http\Resources\Master\Account\MasterBalanceSheetAccountResource;
-use App\Models\Master\MasterBalanceSheetAccount;
+use App\Http\Requests\Master\Account\StoreMasterGeneralLedgerAccountRequest;
+use App\Http\Requests\Master\Account\UpdateMasterGeneralLedgerAccountRequest;
+use App\Http\Resources\Master\Account\MasterGeneralLedgerAccountCollection;
+use App\Http\Resources\Master\Account\MasterGeneralLedgerAccountResource;
+use App\Models\Master\Account\MasterGeneralLedgerAccount;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use OwenIt\Auditing\Models\Audit;
 
-class MasterBalanceSheetAccountController extends Controller
+class MasterGeneralLedgerAccountController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $query = MasterBalanceSheetAccount::query()->orderBy('numberBalanceSheetAccount', 'asc');
+        $query = MasterGeneralLedgerAccount::with(['balanceSheetAccount'])->orderBy('numberGeneralLedgerAccount', 'asc');
 
-        if (request('nameBalanceSheetAccount')) {
-            $query->where("nameBalanceSheetAccount", "like", "%" . request("nameBalanceSheetAccount") . "%");
+        if (request('nameGeneralLedgerAccount')) {
+            $query->where("nameGeneralLedgerAccount", "like", "%" . request("nameGeneralLedgerAccount") . "%");
         }
 
-        $BalanceSheetAccount = $query->paginate(10);
+        $GeneralLedgerAccount = $query->paginate(10);
 
         // $customPaginate = MyServices::customPaginate($articles);
 
-        if ($BalanceSheetAccount->isEmpty()) {
+        if ($GeneralLedgerAccount->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Balance Sheet Account Empty'
+                'message' => 'General Ledger Accounts Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
-            return new MasterBalanceSheetAccountCollection($BalanceSheetAccount);
+            return new MasterGeneralLedgerAccountCollection($GeneralLedgerAccount);
         }
     }
 
@@ -51,7 +52,7 @@ class MasterBalanceSheetAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMasterBalanceSheetAccountRequest $request)
+    public function store(StoreMasterGeneralLedgerAccountRequest $request)
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
@@ -59,12 +60,12 @@ class MasterBalanceSheetAccountController extends Controller
 
         try {
             // dd('masuk');
-            $BalanceSheetAccount = MasterBalanceSheetAccount::withTrashed()->where('numberBalanceSheetAccount', $request->numberBalanceSheetAccount)->first();
-            // dd($BalanceSheetAccount);
+            $GeneralLedgerAccount = MasterGeneralLedgerAccount::withTrashed()->where('numberGeneralLedgerAccount', $request->numberGeneralLedgerAccount)->first();
+            // dd($GeneralLedgerAccount);
 
-            if ($BalanceSheetAccount) {
-                $BalanceSheetAccount->restore();
-                $BalanceSheetAccount->update($request->validated());
+            if ($GeneralLedgerAccount) {
+                $GeneralLedgerAccount->restore();
+                $GeneralLedgerAccount->update($request->validated());
 
                 return response()->json([
                     'status' => Response::HTTP_OK,
@@ -73,7 +74,7 @@ class MasterBalanceSheetAccountController extends Controller
             }
             // akhir penerapan soft delete
 
-            MasterBalanceSheetAccount::create($data);
+            MasterGeneralLedgerAccount::create($data);
 
             return response()->json([
                 'status' => Response::HTTP_OK,
@@ -93,16 +94,16 @@ class MasterBalanceSheetAccountController extends Controller
      */
     public function show($id)
     {
-        $BalanceSheetAccount = MasterBalanceSheetAccount::find($id);
-        // dd($BalanceSheetAccount);
-        if ($BalanceSheetAccount === null) {
+        $GeneralLedgerAccount = MasterGeneralLedgerAccount::find($id);
+        // dd($GeneralLedgerAccount);
+        if ($GeneralLedgerAccount === null) {
             return response()->json([
                 'status' => Response::HTTP_NOT_FOUND,
                 'message' => 'Balance Sheet Account Empty'
             ], Response::HTTP_NOT_FOUND);
         } else {
             return response()->json([
-                'data' => new MasterBalanceSheetAccountResource($BalanceSheetAccount),
+                'data' => new MasterGeneralLedgerAccountResource($GeneralLedgerAccount),
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         }
@@ -111,7 +112,7 @@ class MasterBalanceSheetAccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MasterBalanceSheetAccount $masterBalanceSheetAccount)
+    public function edit(MasterGeneralLedgerAccount $masterGeneralLedgerAccount)
     {
         //
     }
@@ -119,19 +120,19 @@ class MasterBalanceSheetAccountController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMasterBalanceSheetAccountRequest $request, $id)
+    public function update(UpdateMasterGeneralLedgerAccountRequest $request, $id)
     {
-        $BalanceSheetAccount = MasterBalanceSheetAccount::findOrFail($id);
-        $BalanceSheetAccount['updated_by'] = Auth::id();
-        $origin = clone $BalanceSheetAccount;
-        // dd($BalanceSheetAccount);
+        $GeneralLedgerAccount = MasterGeneralLedgerAccount::findOrFail($id);
+        $GeneralLedgerAccount['updated_by'] = Auth::id();
+        $origin = clone $GeneralLedgerAccount;
+        // dd($GeneralLedgerAccount);
         // 
-        $BalanceSheetAccount->update($request->validated());
+        $GeneralLedgerAccount->update($request->validated());
 
         try {
             return response()->json([
-                'data' => new MasterBalanceSheetAccountResource($BalanceSheetAccount),
-                'message' => "Master customer with name '$origin->nameBalanceSheetAccount' has been changed  '$BalanceSheetAccount->nameBalanceSheetAccount'",
+                'data' => new MasterGeneralLedgerAccountResource($GeneralLedgerAccount),
+                'message' => "Master customer with name '$origin->nameGeneralLedgerAccount' has been changed  '$GeneralLedgerAccount->nameGeneralLedgerAccount'",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
@@ -148,23 +149,23 @@ class MasterBalanceSheetAccountController extends Controller
      */
     public function destroy($id)
     {
-        $BalanceSheetAccount = MasterBalanceSheetAccount::find($id);
-        $origin = clone $BalanceSheetAccount;
+        $GeneralLedgerAccount = MasterGeneralLedgerAccount::find($id);
+        $origin = clone $GeneralLedgerAccount;
 
-        // $exists = MasterBalanceSheetAccount::where('codePremix', $id)->exists();
+        // $exists = MasterGeneralLedgerAccount::where('codePremix', $id)->exists();
         // dd($exists);
         // if ($exists) {
         //     return response()->json([
-        //         'message' => "Code Premix  type cannot be deleted because it is linked to a BalanceSheetAccount",
+        //         'message' => "Code Premix  type cannot be deleted because it is linked to a GeneralLedgerAccount",
         //         'status' => Response::HTTP_FORBIDDEN
         //     ], Response::HTTP_FORBIDDEN);
         // }
 
-        $BalanceSheetAccount->delete();
+        $GeneralLedgerAccount->delete();
 
         try {
             return response()->json([
-                'message' => "Account Balance  with name '$origin->nameBalanceSheetAccount' has been deleted",
+                'message' => "Account general ledger  with name '$origin->nameGeneralLedgerAccount' has been deleted",
                 'status' => Response::HTTP_OK,
             ], Response::HTTP_OK);
         } catch (Exception $e) {

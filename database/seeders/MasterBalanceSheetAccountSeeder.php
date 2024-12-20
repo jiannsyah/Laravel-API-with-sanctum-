@@ -17,9 +17,9 @@ class MasterBalanceSheetAccountSeeder extends Seeder
         DB::table('master_balance_sheet_accounts')->truncate();
         DB::table('master_balance_sheet_accounts')->insert([
             'id' => Str::uuid()->toString(),    // Mengisi UUID secara manual
-            'numberAccount' => '110000',
-            'nameAccountBalance' => 'AKTIVA LANCAR',
-            'abbreviation' => 'AKTIVA LANCAR',
+            'numberBalanceSheetAccount' => '110000',
+            'nameBalanceSheetAccount' => 'AKTIVA LANCAR',
+            'abvBalanceSheetAccount' => 'AKTIVA LANCAR',
             'characteristicAccount' => 'Header',
             'typeAccount' => 'AK',
             'specialAccount' => 'KS',
@@ -30,9 +30,9 @@ class MasterBalanceSheetAccountSeeder extends Seeder
         ]);
         DB::table('master_balance_sheet_accounts')->insert([
             'id' => Str::uuid()->toString(),    // Mengisi UUID secara manual
-            'numberAccount' => '110100',
-            'nameAccountBalance' => 'KAS',
-            'abbreviation' => 'KAS',
+            'numberBalanceSheetAccount' => '110100',
+            'nameBalanceSheetAccount' => 'KAS',
+            'abvBalanceSheetAccount' => 'KAS',
             'characteristicAccount' => 'Account',
             'typeAccount' => 'AK',
             'specialAccount' => 'KS',
@@ -43,9 +43,9 @@ class MasterBalanceSheetAccountSeeder extends Seeder
         ]);
         DB::table('master_balance_sheet_accounts')->insert([
             'id' => Str::uuid()->toString(),    // Mengisi UUID secara manual
-            'numberAccount' => '110200',
-            'nameAccountBalance' => 'BANK',
-            'abbreviation' => 'BANK',
+            'numberBalanceSheetAccount' => '110200',
+            'nameBalanceSheetAccount' => 'BANK',
+            'abvBalanceSheetAccount' => 'BANK',
             'characteristicAccount' => 'Account',
             'typeAccount' => 'AK',
             'specialAccount' => 'KS',
@@ -56,9 +56,9 @@ class MasterBalanceSheetAccountSeeder extends Seeder
         ]);
         DB::table('master_balance_sheet_accounts')->insert([
             'id' => Str::uuid()->toString(),    // Mengisi UUID secara manual
-            'numberAccount' => '119999',
-            'nameAccountBalance' => 'TOTAL AKTIVA LANCAR',
-            'abbreviation' => 'TOTAL AKTIVA LANCAR',
+            'numberBalanceSheetAccount' => '119999',
+            'nameBalanceSheetAccount' => 'TOTAL AKTIVA LANCAR',
+            'abvBalanceSheetAccount' => 'TOTAL AKTIVA LANCAR',
             'characteristicAccount' => 'Total',
             'typeAccount' => 'AK',
             'specialAccount' => 'KS',

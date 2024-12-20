@@ -23,7 +23,7 @@ class MasterBalanceSheetAccount extends Model implements Auditable
 
     protected $dates = ['deleted_at'];
 
-    protected $fillable = ['numberAccount', 'nameAccountBalance', 'abbreviation', 'characteristicAccount', 'typeAccount', 'specialAccount', 'created_by', 'updated_by'];
+    protected $fillable = ['numberBalanceSheetAccount', 'nameBalanceSheetAccount', 'abvBalanceSheetAccount', 'characteristicAccount', 'typeAccount', 'specialAccount', 'created_by', 'updated_by'];
 
     public function createdBy()
     {

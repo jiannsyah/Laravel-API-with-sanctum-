@@ -17,9 +17,9 @@ class MasterBalanceSheetAccountResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'numberAccount' => $this->numberAccount,
-            'nameAccountBalance' => $this->nameAccountBalance,
-            'abbreviation' => $this->abbreviation,
+            'numberBalanceSheetAccount' => $this->numberBalanceSheetAccount,
+            'nameBalanceSheetAccount' => $this->nameBalanceSheetAccount,
+            'abvBalanceSheetAccount' => $this->abvBalanceSheetAccount,
             'characteristicAccount' => $this->characteristicAccount,
             'typeAccount' => $this->typeAccount,
             'specialAccount' => $this->specialAccount,
