@@ -15,7 +15,6 @@ use App\Http\Controllers\API\V1\Master\Product\MasterProductGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialGroupController;
 use App\Http\Controllers\API\V1\Master\RawMaterial\MasterRawMaterialTypeController;
-use App\Models\Master\Parameter\MasterParameter;
 
 Route::prefix('V1')->middleware('auth:sanctum')->group(function () {
     Route::resource('raw-material-type', MasterRawMaterialTypeController::class);
