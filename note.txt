@@ -80,3 +80,59 @@ install swagger
 5. php artisan l5-swagger:generate      
 
 
+install laravel auditing
+    1.  composer require owen-it/laravel-auditing
+    2.  php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
+    3.  php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="migrations"
+    4.  setting uuid karena database yang kita gunakan menggunakan UUIDs\
+        di migration/2024_12_19_091507_create_audits_table
+        mengubah :
+                $table->string('auditable');
+        menjadi :
+                $table->string('auditable_type');
+                $table->uuid('auditable_id');
+                
+                tambahkan:
+                
+                $table->index([
+                    'auditable_type',
+                    'auditable_id',
+                ]);
+    5.  php artisan migrate
+        otomatis akan terbentuk tabel audit di database
+    6.  sekarang perlu di setting di model dengan menambahkan 
+        use OwenIt\Auditing\Contracts\Auditable;
+        class MasterSalesman extends Model implements Auditable
+        {
+            use \OwenIt\Auditing\Auditable;
+        }
+    7.  secara otomatis akan terbentuk apapun yang terjadi di model MasterSalesma
+        namun ada satu kendala yaitu. user_id tidak masuk ke record. kita perlu mengubah:
+            di config/audit.php:
+            'user'      => [
+                'morph_prefix' => 'user',
+                'guards'       => [
+                    'web',
+                    'api',
+                    'sanctum'
+                ],
+                'resolver'     => OwenIt\Auditing\Resolvers\UserResolver::class
+            ],
+            dan config/auth.php
+            'guards' => [
+                'web' => [
+                    'driver' => 'session',
+                    'provider' => 'users',
+                ],
+                'sanctum' => [
+                    'driver' => 'sanctum',
+                    'provider' => 'users',
+                ],
+            ],
+
+
+        
+        
+    
+
+    

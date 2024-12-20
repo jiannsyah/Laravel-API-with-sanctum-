@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterBalanceSheetAccount extends Model
+class MasterBalanceSheetAccount extends Model implements Auditable
 {
     /** @use HasFactory<\Database\Factories\Master\MasterBalanceSheetAccountFactory> */
     use HasFactory;
@@ -17,6 +18,8 @@ class MasterBalanceSheetAccount extends Model
     use HasUuids;
 
     use SoftDeletes;
+
+    use \OwenIt\Auditing\Auditable;
 
     protected $dates = ['deleted_at'];
 
