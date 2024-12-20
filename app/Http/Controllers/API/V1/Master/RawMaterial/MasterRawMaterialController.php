@@ -7,7 +7,7 @@ use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialCollection;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialResource;
-use App\Models\MasterRawMaterial;
+use App\Models\Master\MasterRawMaterial;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;

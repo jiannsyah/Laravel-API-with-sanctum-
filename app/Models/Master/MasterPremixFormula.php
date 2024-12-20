@@ -1,34 +1,30 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Master;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterRawMaterialType extends Model
+class MasterPremixFormula extends Model
 {
     use HasFactory;
-
     use HasUuids;
-
     use SoftDeletes; // Mengaktifkan soft deletes
 
-    protected $table = 'master_raw_material_types';
-
+    protected $fillable = ['codePremix', 'squenceNumber', 'quantity', 'unitOfMeasurement', 'created_by', 'updated_by'];
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
-
-    public function groups()
+    public function premix()
     {
-        return $this->hasMany(MasterRawMaterialGroup::class, 'codeRawMaterialType');
+        return $this->belongsTo(MasterPremix::class, 'codePremix', 'codePremix');
     }
 
-    public function materials()
+    public function rawMaterialGroups()
     {
-        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialType');
+        return $this->belongsTo(MasterRawMaterialGroup::class, 'codeRawMaterialGroup', 'codeRawMaterialGroup');
     }
 
     public function createdBy()

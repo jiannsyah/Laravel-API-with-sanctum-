@@ -1,36 +1,38 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Master;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterRawMaterial extends Model
+class MasterRawMaterialGroup extends Model
 {
     use HasFactory;
 
     use HasUuids;
 
-    protected $fillable = ['codeRawMaterial', 'nameRawMaterial', 'brand', 'unitOfMeasurement', 'status', 'costPrice', 'codeRawMaterialType', 'codeRawMaterialGroup', 'created_by', 'updated_by'];
-
-    protected $attributes = [
-        'brand' => 'LOCAL'
-    ];
-
     use SoftDeletes; // Mengaktifkan soft deletes
 
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
+
+    protected $fillable = ['codeRawMaterialGroup', 'nameRawMaterialGroup', 'unitOfMeasurement', 'codeRawMaterialType', 'created_by', 'updated_by'];
 
     public function type()
     {
         return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType', 'codeRawMaterialType');
     }
 
-    public function group()
+    public function materials()
     {
-        return $this->belongsTo(MasterRawMaterialGroup::class, 'codeRawMaterialGroup');
+        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialGroup');
+    }
+
+    public function premixFormula()
+    {
+        return $this->belongsTo(MasterPremixFormula::class, 'codeRawMaterialGroup', 'codeRawMaterialGroup');
     }
 
     public function createdBy()

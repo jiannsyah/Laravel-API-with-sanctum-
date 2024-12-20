@@ -1,23 +1,32 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Master;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterProductFormulaIngredients extends Model
+class MasterPremix extends Model
 {
     use HasFactory;
     use HasUuids;
-    use SoftDeletes;
-    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
-    protected $fillable = ['codeProductFormula', 'squenceNumber', 'codeSupportingMaterial', 'quantity', 'notes', 'created_by', 'updated_by'];
 
-    public function main()
+    protected $fillable = ['codePremix', 'namePremix', 'unitOfMeasurement', 'status', 'codePremixGroup', 'created_by', 'updated_by'];
+
+    use SoftDeletes; // Mengaktifkan soft deletes
+
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
+
+    public function group()
     {
-        return $this->belongsTo(MasterProductFormulaMain::class, 'codeProductFormula', 'codeProductFormula');
+        return $this->belongsTo(MasterPremixGroup::class, 'codePremixGroup', 'codePremixGroup');
+    }
+
+    public function formulas()
+    {
+        return $this->hasMany(MasterPremixFormula::class, 'codePremix');
     }
 
     public function createdBy()

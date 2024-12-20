@@ -7,7 +7,7 @@ use App\Http\Requests\Master\General\StoreMasterSalesmanRequest;
 use App\Http\Requests\Master\General\UpdateMasterSalesmanRequest;
 use App\Http\Resources\Master\General\MasterSalesmanCollection;
 use App\Http\Resources\Master\General\MasterSalesmanResource;
-use App\Models\MasterSalesman;
+use App\Models\Master\MasterSalesman;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;

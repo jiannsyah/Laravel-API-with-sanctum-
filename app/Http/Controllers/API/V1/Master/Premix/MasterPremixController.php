@@ -7,7 +7,7 @@ use App\Http\Requests\Master\Premix\StoreMasterPremixRequest;
 use App\Http\Requests\Master\Premix\UpdateMasterPremixRequest;
 use App\Http\Resources\Master\Premix\MasterPremixCollection;
 use App\Http\Resources\Master\Premix\MasterPremixResource;
-use App\Models\MasterPremix;
+use App\Models\Master\MasterPremix;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

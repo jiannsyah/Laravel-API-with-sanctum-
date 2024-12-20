@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\Premix\StoreMasterPremixFormulaRequest;
 use App\Http\Requests\Master\Premix\UpdateMasterPremixFormulaRequest;
 use App\Http\Resources\Master\Premix\MasterPremixFormulaResource;
-use App\Models\MasterPremixFormula;
+use App\Models\Master\MasterPremixFormula;
 use Illuminate\Http\Response;
 
 

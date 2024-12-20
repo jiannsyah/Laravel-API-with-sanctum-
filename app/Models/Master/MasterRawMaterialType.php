@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Master;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MasterProduct extends Model
+class MasterRawMaterialType extends Model
 {
     use HasFactory;
 
@@ -15,12 +16,20 @@ class MasterProduct extends Model
 
     use SoftDeletes; // Mengaktifkan soft deletes
 
-    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
+    protected $table = 'master_raw_material_types';
+
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    public function group()
+    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
+
+    public function groups()
     {
-        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup', 'codeProductGroup');
+        return $this->hasMany(MasterRawMaterialGroup::class, 'codeRawMaterialType');
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialType');
     }
 
     public function createdBy()
