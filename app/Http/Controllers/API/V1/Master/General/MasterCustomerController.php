@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1\Master\General;
 
+use App\Exports\Master\Customer\MasterCustomerExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\General\StoreMasterCustomerRequest;
 use App\Http\Requests\Master\General\UpdateMasterCustomerRequest;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 
 class MasterCustomerController extends Controller
@@ -34,9 +36,9 @@ class MasterCustomerController extends Controller
 
         if ($customers->isEmpty()) {
             return response()->json([
-                'status' => Response::HTTP_NOT_FOUND,
+                'status' => Response::HTTP_OK,
                 'message' => 'Customer  Empty'
-            ], Response::HTTP_NOT_FOUND);
+            ], Response::HTTP_OK);
         } else {
             return new MasterCustomerCollection($customers);
         }
@@ -209,5 +211,29 @@ class MasterCustomerController extends Controller
             'success' => true,
             'logs' => $data,
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        // Ambil filter dari request
+        $filters = $request->only(['code_from', 'code_to', 'name', 'status', 'ppn']); // Hanya ambil filter yang diizinkan
+
+        // Pastikan nilai status berupa angka 0 atau 1 (jika diperlukan)
+        if (isset($filters['status']) && !in_array($filters['status'], ['Active', 'InActive'])) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'Status filter value must be Active or inActive'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        if (isset($filters['ppn']) && !in_array($filters['ppn'], ['PPN', 'Non-PPN'])) {
+            return response()->json([
+                'status' => Response::HTTP_NOT_FOUND,
+                'message' => 'PPN filter value must be PPN or Non-PPN'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $fileName = 'list-customer-' . now()->format('Y-m-d_i-s') . '.xlsx';
+
+        return Excel::download(new MasterCustomerExport($filters), $fileName);
     }
 }

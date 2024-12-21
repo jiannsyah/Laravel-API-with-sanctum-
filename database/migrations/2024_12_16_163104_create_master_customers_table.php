@@ -14,18 +14,18 @@ return new class extends Migration
         Schema::create('master_customers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('codeCustomer', 5)->unique();
-            $table->string('nameCustomer', 40);
-            $table->string('abbreviation', 20);
-            $table->string('addressLine1', 50)->nullable();
-            $table->string('addressLine2', 50)->nullable();
+            $table->string('nameCustomer', 50);
+            $table->string('abbreviation', 30);
+            $table->string('addressLine1', 75)->nullable();
+            $table->string('addressLine2', 75)->nullable();
             $table->enum('ppn', ['PPN', 'Non-PPN'])->default('PPN');
-            $table->string('phone', 15)->nullable();
+            $table->string('phone', 50)->nullable();
             $table->string('email')->nullable();
-            $table->string('attention')->nullable();
+            $table->string('attention', 50)->nullable();
             $table->enum('priceType', ['WholesalePrice', 'NonWholesalePrice', 'Retail'])->default('WholesalePrice');
             $table->integer('top')->default(0);
-            $table->string('npwp', 16)->nullable();
-            $table->string('nik', 16)->nullable();
+            $table->string('npwp', 25)->nullable();
+            $table->string('nik', 25)->nullable();
             $table->enum('status', ['Active', 'InActive'])->default('Active');
             // 
             $table->foreignId('created_by')->constrained('users');
