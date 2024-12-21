@@ -130,7 +130,11 @@ install laravel auditing
                 ],
             ],
 
-
+install laravel excel
+    1.  composer require maatwebsite/excel
+    2.  php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
+    3.  php artisan make:export Master/Customer/MasterCustomerExport --model=MasterCustomer
+    lalu edit di MasterCustomerExport & MasterCustomerController
         
         
     
