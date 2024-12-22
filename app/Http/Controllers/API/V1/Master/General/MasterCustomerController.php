@@ -9,13 +9,17 @@ use App\Http\Requests\Master\General\UpdateMasterCustomerRequest;
 use App\Http\Resources\Master\General\MasterCustomerCollection;
 use App\Http\Resources\Master\General\MasterCustomerResource;
 use App\Models\Master\MasterCustomer;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MasterCustomerController extends Controller
 {
@@ -37,7 +41,7 @@ class MasterCustomerController extends Controller
         if ($customers->isEmpty()) {
             return response()->json([
                 'status' => Response::HTTP_OK,
-                'message' => 'Customer  Empty'
+                'message' => 'Customer Empty'
             ], Response::HTTP_OK);
         } else {
             return new MasterCustomerCollection($customers);
@@ -215,25 +219,53 @@ class MasterCustomerController extends Controller
 
     public function export(Request $request)
     {
-        // Ambil filter dari request
-        $filters = $request->only(['code_from', 'code_to', 'name', 'status', 'ppn']); // Hanya ambil filter yang diizinkan
+        $query = parse_url($request, PHP_URL_QUERY);
+        parse_str($query, $params);
+        // 
+        $req = $request->only(['format_excel', 'filter']);
+        // 
+        $customers = QueryBuilder::for(MasterCustomer::class)
+            ->allowedFilters([
+                AllowedFilter::callback('name', function (Builder $query, $value) {
+                    if ($value) {
+                        $query->where('nameCustomer', 'like', "%$value%");
+                    }
+                }),
+                AllowedFilter::callback('code_from', function (Builder $query, $value) {
+                    if ($value) {
+                        $query->where('codeCustomer', '>=', $value);
+                    }
+                }),
+                AllowedFilter::callback('code_to', function (Builder $query, $value) {
+                    if ($value) {
+                        $query->where('codeCustomer', '<=', $value);
+                    }
+                }),
+                AllowedFilter::callback('status', function (Builder $query, $value) {
+                    if (!in_array(strtolower($value), ['active', 'inactive'])) {
+                        return $query->where('status', '!=', $value); // Mengabaikan parameter yang tidak valid
+                    }
+                    $query->where('status', $value);
+                }),
+                AllowedFilter::callback('ppn', function (Builder $query, $value) {
+                    if (!in_array(strtolower($value), ['ppn', 'non-ppn'])) {
+                        return $query->where('ppn', '!=', $value); // Mengabaikan parameter yang tidak valid
+                    }
+                    $query->where('ppn', $value);
+                }),
+            ])
+            ->get();
 
-        // Pastikan nilai status berupa angka 0 atau 1 (jika diperlukan)
-        if (isset($filters['status']) && !in_array($filters['status'], ['Active', 'InActive'])) {
-            return response()->json([
-                'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'Status filter value must be Active or inActive'
-            ], Response::HTTP_NOT_FOUND);
+        if ($req['format_excel'] === true) {
+            $fileName = 'list-customer-' . now()->format('Y-m-d_i-s') . '.xlsx';
+            return Excel::download(new MasterCustomerExport($customers), $fileName);
+        } else {
+            $data = [
+                'title' => 'Master List Customer',
+                'customers' => $customers
+            ];
+            $pdf = Pdf::loadView('pdf.list-customer', $data);
+            return $pdf->stream('list-customer-' . now()->format('d-m-Y') . '.pdf');
         }
-        if (isset($filters['ppn']) && !in_array($filters['ppn'], ['PPN', 'Non-PPN'])) {
-            return response()->json([
-                'status' => Response::HTTP_NOT_FOUND,
-                'message' => 'PPN filter value must be PPN or Non-PPN'
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        $fileName = 'list-customer-' . now()->format('Y-m-d_i-s') . '.xlsx';
-
-        return Excel::download(new MasterCustomerExport($filters), $fileName);
     }
 }

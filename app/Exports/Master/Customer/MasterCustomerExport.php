@@ -2,10 +2,9 @@
 
 namespace App\Exports\Master\Customer;
 
-use App\Models\Master\MasterCustomer;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -13,44 +12,25 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 
-class MasterCustomerExport extends DefaultValueBinder implements FromQuery, WithMapping, WithHeadings, WithCustomValueBinder
+class MasterCustomerExport extends DefaultValueBinder implements FromCollection, WithMapping, WithHeadings, WithCustomValueBinder
 {
-    protected $filters = [];
+    use Exportable;
 
-    public function __construct(array $filters)
+    protected $customers;
+
+    public function __construct($customers)
     {
-        // Hanya izinkan filter tertentu (email dan status)
-        $allowedFilters = ['code_from', 'code_to', 'name', 'status', 'ppn'];
-        $this->filters = array_filter(
-            $filters,
-            fn ($key) => in_array($key, $allowedFilters),
-            ARRAY_FILTER_USE_KEY
-        );
+        $this->customers = $customers;
     }
 
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function query()
+    public function collection()
     {
-        $query = MasterCustomer::query();
-
-        // // Terapkan filter dinamis
-        foreach ($this->filters as $key => $value) {
-            if ($key === 'name') {
-                $query->where('nameCustomer', 'like', "%{$value}%");
-            } elseif ($key === 'status') {
-                $query->where('status', $value);
-            } elseif ($key === 'ppn') {
-                $query->where('ppn', $value);
-            } elseif ($key === 'code_from') {
-                $query->where('codeCustomer', '>=', $value); // Filter untuk batas bawah
-            } elseif ($key === 'code_to') {
-                $query->where('codeCustomer', '<=', $value); // Filter untuk batas atas
-            }
-        }
-        return $query;
+        return $this->customers;
     }
+
     public function map($customers): array
     {
         return [

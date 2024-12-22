@@ -3,6 +3,8 @@
 namespace App\Models\Master;
 
 use App\Models\User;
+use App\Traits\FilterReports\Master\Customer\Searchable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,4 +35,11 @@ class MasterCustomer extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function scopeLikeName(Builder $query, $name): Builder
+    {
+        return $query->where('nameCustomer', 'like', "%$name%");
+    }
+
+    // 
 }
