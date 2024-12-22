@@ -136,7 +136,13 @@ install laravel excel
     3.  php artisan make:export Master/Customer/MasterCustomerExport --model=MasterCustomer
     lalu edit di MasterCustomerExport & MasterCustomerController
         
-        
+install domPdf
+    1.  composer require barryvdh/laravel-dompdf
+    2.  php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
+
+install spatie / query builder
+    1.  composer require spatie/laravel-query-builder
+    2.  php artisan vendor:publish --provider="Spatie\QueryBuilder\QueryBuilderServiceProvider" --tag="query-builder-config"        
     
 
     
