@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests\Master\RawMaterial;
 
-use App\Models\Master\MasterRawMaterialGroup;
-use App\Models\Master\MasterRawMaterialType;
+use App\Models\Master\RawMaterial\MasterRawMaterialGroup;
+use App\Models\Master\RawMaterial\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
 
 class StoreMasterRawMaterialGroupRequest extends FormRequest

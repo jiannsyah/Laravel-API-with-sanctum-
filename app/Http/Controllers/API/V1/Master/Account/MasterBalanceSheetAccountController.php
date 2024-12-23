@@ -7,7 +7,7 @@ use App\Http\Requests\Master\Account\StoreMasterBalanceSheetAccountRequest;
 use App\Http\Requests\Master\Account\UpdateMasterBalanceSheetAccountRequest;
 use App\Http\Resources\Master\Account\MasterBalanceSheetAccountCollection;
 use App\Http\Resources\Master\Account\MasterBalanceSheetAccountResource;
-use App\Models\Master\MasterBalanceSheetAccount;
+use App\Models\Master\Account\MasterBalanceSheetAccount;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

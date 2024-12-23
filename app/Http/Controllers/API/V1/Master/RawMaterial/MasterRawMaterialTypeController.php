@@ -7,9 +7,8 @@ use App\Http\Requests\Master\RawMaterial\StoreMasterRawMaterialTypeRequest;
 use App\Http\Requests\Master\RawMaterial\UpdateMasterRawMaterialTypeRequest;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeCollection;
 use App\Http\Resources\Master\RawMaterial\MasterRawMaterialTypeResource;
-use App\Models\Master\MasterRawMaterialGroup;
-use App\Models\Master\MasterRawMaterialType;
-
+use App\Models\Master\RawMaterial\MasterRawMaterialGroup;
+use App\Models\Master\RawMaterial\MasterRawMaterialType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Exception;

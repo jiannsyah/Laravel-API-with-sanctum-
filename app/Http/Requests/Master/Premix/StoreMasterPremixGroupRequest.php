@@ -2,8 +2,7 @@
 
 namespace App\Http\Requests\Master\Premix;
 
-use App\Models\Master\MasterPremixGroup;
-use App\Models\Master\MasterRawMaterialType;
+use App\Models\Master\RawMaterial\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

@@ -8,7 +8,7 @@ use App\Http\Requests\Master\General\StoreMasterCustomerRequest;
 use App\Http\Requests\Master\General\UpdateMasterCustomerRequest;
 use App\Http\Resources\Master\General\MasterCustomerCollection;
 use App\Http\Resources\Master\General\MasterCustomerResource;
-use App\Models\Master\MasterCustomer;
+use App\Models\Master\General\MasterCustomer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Master\General;
 
-use App\Models\Master\MasterSalesman;
+use App\Models\Master\General\MasterSalesman;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

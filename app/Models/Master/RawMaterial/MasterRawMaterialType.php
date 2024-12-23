@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\RawMaterial;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterRawMaterialGroup extends Model implements Auditable
+class MasterRawMaterialType extends Model implements Auditable
 {
     use HasFactory;
 
@@ -19,23 +19,21 @@ class MasterRawMaterialGroup extends Model implements Auditable
 
     use \OwenIt\Auditing\Auditable;
 
+
+    protected $table = 'master_raw_material_types';
+
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    protected $fillable = ['codeRawMaterialGroup', 'nameRawMaterialGroup', 'unitOfMeasurement', 'codeRawMaterialType', 'created_by', 'updated_by'];
+    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
 
-    public function type()
+    public function groups()
     {
-        return $this->belongsTo(MasterRawMaterialType::class, 'codeRawMaterialType', 'codeRawMaterialType');
+        return $this->hasMany(MasterRawMaterialGroup::class, 'codeRawMaterialType');
     }
 
     public function materials()
     {
-        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialGroup');
-    }
-
-    public function premixFormula()
-    {
-        return $this->belongsTo(MasterPremixFormula::class, 'codeRawMaterialGroup', 'codeRawMaterialGroup');
+        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialType');
     }
 
     public function createdBy()

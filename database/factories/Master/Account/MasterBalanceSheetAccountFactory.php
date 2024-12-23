@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Master\Account;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MasterProductFormulaMain>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Master\MasterBalanceSheetAccount>
  */
-class MasterProductFormulaMainFactory extends Factory
+class MasterBalanceSheetAccountFactory extends Factory
 {
     /**
      * Define the model's default state.

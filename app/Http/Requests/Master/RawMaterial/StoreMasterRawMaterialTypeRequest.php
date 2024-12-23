@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Master\RawMaterial;
 
-use App\Models\Master\MasterRawMaterialType;
+use App\Models\Master\RawMaterial\MasterRawMaterialType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;

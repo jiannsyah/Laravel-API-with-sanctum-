@@ -7,7 +7,7 @@ use App\Http\Requests\Master\General\StoreMasterSupplierRequest;
 use App\Http\Requests\Master\General\UpdateMasterSupplierRequest;
 use App\Http\Resources\Master\General\MasterSupplierCollection;
 use App\Http\Resources\Master\General\MasterSupplierResource;
-use App\Models\Master\MasterSupplier;
+use App\Models\Master\General\MasterSupplier;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

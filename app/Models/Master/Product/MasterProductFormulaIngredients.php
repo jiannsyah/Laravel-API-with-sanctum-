@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\Product;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,9 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterSalesman extends Model implements Auditable
+class MasterProductFormulaIngredients extends Model implements Auditable
 {
-    /** @use HasFactory<\Database\Factories\MasterSalesmanFactory> */
     use HasFactory;
 
     use HasUuids;
@@ -20,14 +19,19 @@ class MasterSalesman extends Model implements Auditable
 
     use \OwenIt\Auditing\Auditable;
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
+
+    protected $fillable = ['codeProductFormula', 'squenceNumber', 'codeSupportingMaterial', 'quantity', 'notes', 'created_by', 'updated_by'];
+
+    public function main()
+    {
+        return $this->belongsTo(MasterProductFormulaMain::class, 'codeProductFormula', 'codeProductFormula');
+    }
 
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
-    protected $fillable = ['codeSalesman', 'nameSalesman', 'abbreviation',  'created_by', 'updated_by'];
 
     public function updatedBy()
     {

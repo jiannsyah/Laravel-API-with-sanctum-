@@ -7,7 +7,7 @@ use App\Http\Requests\Master\Product\StoreMasterProductRequest;
 use App\Http\Requests\Master\Product\UpdateMasterProductRequest;
 use App\Http\Resources\Master\Product\MasterProductCollection;
 use App\Http\Resources\Master\Product\MasterProductResource;
-use App\Models\Master\MasterProduct;
+use App\Models\Master\Product\MasterProduct;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

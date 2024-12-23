@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Master\Product;
 
 use App\Models\Master\MasterProduct;
-use App\Models\Master\MasterProductGroup;
+use App\Models\Master\Product\MasterProductGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

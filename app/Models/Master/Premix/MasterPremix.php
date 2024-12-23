@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\Premix;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,21 +9,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterProductFormulaMain extends Model implements Auditable
+class MasterPremix extends Model implements Auditable
 {
     use HasFactory;
 
     use HasUuids;
 
-    use SoftDeletes;
-
     use \OwenIt\Auditing\Auditable;
+
+    use SoftDeletes; // Mengaktifkan soft deletes
 
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    public function ingredients()
+    protected $fillable = ['codePremix', 'namePremix', 'unitOfMeasurement', 'status', 'codePremixGroup', 'created_by', 'updated_by'];
+
+    public function group()
     {
-        return $this->hasMany(MasterProductFormulaIngredients::class, 'codeProductFormula');
+        return $this->belongsTo(MasterPremixGroup::class, 'codePremixGroup', 'codePremixGroup');
+    }
+
+    public function formulas()
+    {
+        return $this->hasMany(MasterPremixFormula::class, 'codePremix');
     }
 
     public function createdBy()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\Product;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class MasterRawMaterialType extends Model implements Auditable
+class MasterProduct extends Model implements Auditable
 {
     use HasFactory;
 
@@ -19,21 +19,13 @@ class MasterRawMaterialType extends Model implements Auditable
 
     use \OwenIt\Auditing\Auditable;
 
-
-    protected $table = 'master_raw_material_types';
+    protected $fillable = ['codeProduct', 'nameProduct', 'smallUnit', 'mediumUnit', 'largeUnit', 'smallUnitQty', 'mediumUnitQty', 'largeUnitQty', 'dryUnitWeight', 'wetUnitWeight', 'wholesalePrice', 'nonWholesalePrice', 'retailPrice', 'sellingPriceUnit', 'status', 'codeProductGroup', 'created_by', 'updated_by'];
 
     protected $dates = ['deleted_at']; // Menandakan kolom deleted_at sebagai tipe date
 
-    protected $fillable = ['codeRawMaterialType', 'nameRawMaterialType', 'created_by', 'updated_by'];
-
-    public function groups()
+    public function group()
     {
-        return $this->hasMany(MasterRawMaterialGroup::class, 'codeRawMaterialType');
-    }
-
-    public function materials()
-    {
-        return $this->hasMany(MasterRawMaterial::class, 'codeRawMaterialType');
+        return $this->belongsTo(MasterProductGroup::class, 'codeProductGroup', 'codeProductGroup');
     }
 
     public function createdBy()

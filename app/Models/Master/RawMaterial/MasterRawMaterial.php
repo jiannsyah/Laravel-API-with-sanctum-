@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\RawMaterial;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Master;
+namespace App\Models\Master\General;
 
 use App\Models\User;
 use App\Traits\FilterReports\Master\Customer\Searchable;

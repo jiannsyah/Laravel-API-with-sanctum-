@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Master\RawMaterial;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MasterPremixGroup>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MasterRawMaterialType>
  */
-class MasterPremixGroupFactory extends Factory
+class MasterRawMaterialTypeFactory extends Factory
 {
     /**
      * Define the model's default state.
